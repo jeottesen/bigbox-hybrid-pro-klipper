@@ -13,6 +13,14 @@ See [docs/](docs) for the hardware spec sheet and the ongoing upgrade plan.
 | Firmware | Klipper (was Marlin 1.1.0-RC6) |
 | Nozzle | E3D V6, 0.6mm |
 
+## Firmware
+
+`e3d-big-box.config` is the `make menuconfig` config used to build the AVR
+firmware. "Enable extra low-level configuration options" has to be turned on
+to set the baud rate manually (230400, matching `printer.cfg`'s `[mcu]`).
+`INITIAL_PINS` is set to the hotend fan pin (`PH5`) as a safety measure, so
+the fan is forced on at MCU startup even before Klipper connects.
+
 ## Status
 
 Actively maintained alongside the physical printer. Treat anything here as a personal reference rather than a guide, and always cross-check against your own hardware before copying config values directly.
