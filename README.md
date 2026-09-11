@@ -2,6 +2,7 @@
 
 This repo is the living backup for an E3D BigBox Hybrid Pro. It originally ran Marlin 1.1.0-RC6, and now runs Klipper on a RUMBA board.
 
+See [docs/](docs) for the hardware spec sheet and the ongoing upgrade plan.
 
 ## Machine at a glance
 
