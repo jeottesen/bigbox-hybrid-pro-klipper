@@ -18,8 +18,8 @@
 - **Display:** RepRapDiscount Full Graphic Smart Controller (st7920). Reference doc: https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller. Pins: `cs_pin: PD2`, `sclk_pin: PD3`, `sid_pin: PL7`, `encoder_pins: ^PB5, ^PB6`, `click_pin: ^!PL6`
 - **Main MCU:** ATmega2560
 - **USB-serial bridge chip:** ATmega16U2-AU (separate chip; its own ISP2 header, unrelated to main MCU's ISP1)
-- **Klipper serial path (persistent, by-id — already correctly configured):**
-  `/dev/serial/by-id/usb-RRD__www.ru_RUMBA_-_ATmega_2560_co_9533335313735141A251-if00`
+- **Klipper serial path:** /dev/serial/by-id/usb-RRD__www.ru_RUMBA_-_ATmega_2560_co_9533335313735141A251-if00 (resolves to /dev/ttyACM0)
+- **Baud rate:** 250000 (Klipper's documented default), firmware reflashed to match. Initially failed to connect at 250000 — root cause was an outdated pyserial (3.4) on the host failing to apply that non-standard baud rate to the 16U2's USB-CDC (ttyACM) port; upgrading to pyserial 3.5 (~/klippy-env/bin/pip install -U pyserial) resolved it.
 - **Logic power jumper (`5V_SEL` / "Stand alone" vs "USB Power"):** set to **Standalone** — logic rail is powered from main PSU via onboard 5V DC-DC, not from USB, so cutting main power fully powers down the MCU.
 - **Stock steppers drivers:** genuine **Allegro A4988** (confirmed by chip package label — matches schematic's `A4988BREAKOUT` footprint)
 - **New drivers:** BigTreeTech TMC2209, run in UART mode. `sense_resistor: 0.110` (BTT spec). Reference doc: https://global.bttwiki.com/TMC2209.html
