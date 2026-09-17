@@ -6,12 +6,14 @@ See [printer_data/config/docs/](printer_data/config/docs) for the hardware spec 
 
 ## Machine at a glance
 
-| | |
+|---|---|
 |---|---|
 | Model | E3D BigBox Hybrid Pro |
 | Board | RUMBA (ATmega2560) |
 | Firmware | Klipper (was Marlin 1.1.0-RC6) |
 | Nozzle | E3D V6, 0.6mm |
+| Host | Rapsberry Pi 3 |
+| Host OS | Debian Lite 32bit |
 
 ## Firmware
 Had to update pyserial for the default 250000 baud rate to work
