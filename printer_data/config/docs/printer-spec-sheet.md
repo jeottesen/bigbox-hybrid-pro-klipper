@@ -1,30 +1,40 @@
-# Printer Spec Sheet — Reference Facts
+# Printer Reference
 
 ---
 
-## Machine Identity
+## Printer Specs
 
 - **Model:** E3D BigBox Hybrid Pro
+- **Current firmware:** Klipper
 - **Original firmware:** Marlin 1.1.0-RC6, compiled Jun 10 2016
-- **Original firmware source:** https://github.com/BigBox3D/Marlin/tree/Hybrid-Pro — the correct branch; supersedes the URL reported by `M115` below (`SOURCE_CODE_URL:https://github.com/BigBox3D/Marlin-Hybrid`, which doesn't resolve to the same place)
-- **M115 reported:** `MACHINE_TYPE:BigBox Hybrid P EXTRUDER_COUNT:1`
-- **Bed size (from current Klipper config):** X 0–300mm, Y 0–245mm
+- **Bed size:** X=300mm, Y=200mm Z=250 mm
 - **Nozzle:** E3D V6, 0.6mm
-- **Now running:** Klipper
+
+## Heated Bed
+
+- **Type:** 24V Variable-Power-Density (VPD) heated bed PCB — trace density increases near the outer edges to counteract convective heat loss and keep surface temp uniform.
+- **Substrate:** FR4 fiberglass PCB, copper heating traces, black solder mask, printed mm grid + "HOME (0,0)" markings.
+- **Surface area:** 300mm × 200mm.
+- **Voltage:** 24V DC, driven from the main 24V 17A (400W) PSU via the RUMBA's `HB-OUT` MOSFET terminals.
+- **Sensor:** ATC Semitec 104GT-2, 100k NTC, on `THB` (PK3).
+- **Max Temp:** 120°C - set to 115°C to give a buffer.
+- **Mounting:** Suspended above the Z-carriage frame on four M3 15mm female-female standoffs at the corners.
+- **Print surface:** 4mm Borosilicate glass glass plate + spring steel clips.
 
 ## Control Board
 
-- **Board:** RUMBA (Reprap Universal Mega Board w/ Allegro driver), 135mm × 75mm. Reference doc: https://reprap.org/wiki/RUMBA
-- **Display:** RepRapDiscount Full Graphic Smart Controller (st7920). Reference doc: https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller. Pins: `cs_pin: PD2`, `sclk_pin: PD3`, `sid_pin: PL7`, `encoder_pins: ^PB5, ^PB6`, `click_pin: ^!PL6`
+- **Board:** RUMBA (Reprap Universal Mega Board w/ Allegro driver), 135mm × 75mm. 
+- **Display:** RepRapDiscount Full Graphic Smart Controller (st7920). Pins: `cs_pin: PD2`, `sclk_pin: PD3`, `sid_pin: PL7`, `encoder_pins: ^PB5, ^PB6`, `click_pin: ^!PL6`
 - **Main MCU:** ATmega2560
-- **USB-serial bridge chip:** ATmega16U2-AU (separate chip; its own ISP2 header, unrelated to main MCU's ISP1)
+- **USB-serial bridge chip:** ATmega16U2-AU (separate chip; with its own ISP2 header, unrelated to main MCU's ISP1)
 - **Klipper serial path:** /dev/serial/by-id/usb-RRD__www.ru_RUMBA_-_ATmega_2560_co_9533335313735141A251-if00 (resolves to /dev/ttyACM0)
 - **Baud rate:** 250000 (Klipper's documented default), firmware reflashed to match. Initially failed to connect at 250000 — root cause was an outdated pyserial (3.4) on the host failing to apply that non-standard baud rate to the 16U2's USB-CDC (ttyACM) port; upgrading to pyserial 3.5 (~/klippy-env/bin/pip install -U pyserial) resolved it.
 - **Logic power jumper (`5V_SEL` / "Stand alone" vs "USB Power"):** set to **Standalone** — logic rail is powered from main PSU via onboard 5V DC-DC, not from USB, so cutting main power fully powers down the MCU.
-- **Stock steppers drivers:** genuine **Allegro A4988** (confirmed by chip package label — matches schematic's `A4988BREAKOUT` footprint)
-- **New drivers:** BigTreeTech TMC2209, run in UART mode. `sense_resistor: 0.110` (BTT spec). Reference doc: https://global.bttwiki.com/TMC2209.html
+- **Stock steppers drivers:** Allegro A4988
+- **New drivers:** BigTreeTech TMC2209, run in UART mode. Reference doc: https://global.bttwiki.com/TMC2209.html
 
-## Motors (confirmed via physical nameplate labels)
+## Motors 
+Confirmed via physical labels
 
 | Axis | Model | Rated current | Step angle | Full steps/rev |
 |---|---|---|---|---|
@@ -32,10 +42,11 @@
 | Z, Z1 | Wantai `42BYGHW609L20P1-X2` | 1.7A | 1.8° | 200 |
 
 - Y axis has a 36:16 (2.25:1) belt reduction.
-- All five drivers target `run_current: 1.36` (80% of 1.7A rating) once fully split onto independent UART drivers.
-- **Z temporarily wired in parallel** (two motors, one driver) pending IR probe reliability fix + Z split for `z_tilt`. Shared-driver current: `run_current: 1.6` (driver's own 2A rating × 80%, ≈0.8A delivered per motor while paralleled).
+- Z originaly wired in parallel
 
-## TMC2209 UART Wiring Map (EXP3 header)
+## Pin Reference
+
+# EXP3 Header Wiring Map
 
 EXP3 is a 14-pin (7×2) header.
 
@@ -50,34 +61,26 @@ PWM_2 •  6    5 •  PWM_1
  +5V  •  2    1 •  +12V
 ```
 
-| Axis | UART pin | EXP3 pin # | Note |
+| Axis | UART pin | EXP3 pin # |
 |---|---|---|---|
-| X | PC6 | 14 | clean, dedicated I/O |
-| Y | PC7 | 13 | clean, dedicated I/O |
-| Z | PJ0 | 12 | clean, dedicated I/O |
-| Z1 | PJ1 | 11 | clean, dedicated I/O |
-| E0 | PD1 (SDA) | 10 | **carries R2 10kΩ pull-up to +5V** (board's I2C pull-up pair) — works fine for UART, just not a "clean" pin |
+| X | PC6 | 14 | 
+| Y | PC7 | 13 | 
+| Z | PJ0 | 12 | 
+| Z1 | PJ1 | 11 | 
+| E0 | PD1 (SDA) | 10 |
 
-- EXP3 pin 9 (SCL/PD0) also carries a pull-up (R3, 10kΩ to +5V) — the I2C pair.
-- EXP3 pin 8 (A10/PK2) and pins 2/4/6 are **physically occupied** by the PT100 extruder-temp amplifier board — do not use.
-- EXP3 pin 7 (A9) still free.
-- **Official RUMBA doc confirms EXP3 provides:** "+5V and +12V, 2x ADC, 2x PWM I/O, 4x I/O, I2C" — validates PWM_1/PWM_2 as genuine general-purpose PWM-capable pins (relevant for future BLTouch control line).
-- **Gotcha:** each TMC2209 module has 3 microstep-select jumpers. The 3rd one (mimicking A4988's MS3, always-on for 1/16 microstep) is wired on this board to +5V when "on" — but on the TMC2209 that same physical pin is **PDN_UART**, not MS3. Leaving it on grounds/shorts the UART line and causes silent `DUMP_TMC` failures. Fix: all 3 jumpers removed before wiring UART (may only strictly need the 3rd one removed, not confirmed either way — removing all three is known to work).
+- EXP3 pin 10/9 (SDA/SCL): The I2C pair. PD1/PD0 carries a pull-up (R3, 10kΩ to +5V).
+- EXP3 pin 8 (A10/PK2) and pins 2/4/6 are used by the PT100 extruder-temp amplifier board.
+- EXP3 pin 7 (A9) still free but blocked by empty dupont connector.
+- **Official RUMBA doc confirms EXP3 provides:** "+5V and +12V, 2x ADC, 2x PWM I/O, 4x I/O, I2C" — validates PWM_1/PWM_2 as genuine general-purpose PWM-capable pins.
+
+# TMC2209 Upgrade notes
+- TMC2209 module has 3 microstep-select jumpers. Removed all 3 jumpers removed before wiring UART. May only  need the 3rd one removed, but not confirmed either way.
 - **X axis direction inverted after the driver swap:** `dir_pin: PH1` (no `!`) on TMC2209 — was `!PH1` on the original A4988s.
+- Extra driver current headroom (0.5A→1.36A RMS, ~2.7×) translates to roughly 2×–2.5× more usable acceleration. May not be practical to try though.
 
-## Z Probe
 
-- **Type:** Mini Differential IR height sensor (dc42/Duet3D design), signal wired to **Z-MIN (PC4)**, used in Klipper as `probe:z_virtual_endstop`.
-- **Probe offsets (confirmed live config):** `x_offset: -65.0`, `y_offset: 0`
-- **Reference doc:** https://miscsolutions.wordpress.com/mini-height-sensor-board/
-- **Old Marlin Z-probe offset:** `M851 Z-2.3` (tuned after the M503 dump was taken — supersedes the `-3.00` shown in that dump)
-- **Known issue (root cause confirmed):** sensor self-configures into digital-output mode (2 LED flashes = correct) only if it detects a pull-up on its OUT line within ~4 seconds of power-up; if Klipper hasn't finished booting and enabling that pin's pull-up in time, sensor defaults to analog mode (4 flashes) and gives bad/inconsistent readings until manually unplugged and replugged (which re-triggers its detection window after the board is already fully up).
-- **Confirmed via direct test:** cold power-on LED observed flashing 4 times (bad/analog mode).
-- **Fix identified, not yet installed:** passive 4.7–10kΩ resistor, OUT to +5V, added externally at the connector (no soldering to sensor PCB required). Sourcing resistor as of last update (RC car board or a friend's parts bin).
-- Firmware-level `menuconfig` → "GPIO pins to set at micro-controller startup" was tried as an alternative fix — did not work.
-- **Bed surface affects IR reading quality:** readings only became reliably good after placing a piece of dark paper under the glass bed — the sensor's IR response is sensitive to what's on the far side of the semi-transparent glass. Downside: the paper insulates the bed enough to throw bed heating off by roughly 10-15°C, so PID/target temps have to account for it. Currently looking into a PEI-coated spring steel sheet as a bed replacement — opaque (no paper needed) and also a prerequisite for the BTT Eddy probe option below, so it would fix both problems at once.
-
-## Free / Reserved Pin Reference
+# Other Traced Pins
 
 | Resource | Pin(s) | Status |
 |---|---|---|
@@ -85,20 +88,58 @@ PWM_2 •  6    5 •  PWM_1
 | Y-MAX | PC3 | Free |
 | Z-MAX | PC5 | Free |
 | Z-MIN | PC4 | **Occupied** — IR probe signal |
+| Part-cooling fan | `[fan]` |
+| Hotend fan | PH5 | `[heater_fan hotend_fan]`, thermally linked to extruder, 40°C on threshold |
+| Bed heater | PH6 | `[heater_bed]` |
+| Extruder heater | PE4 | `[extruder]` |
+| Thermistor THB | PK3 | bed thermistor (ATC Semitec 104GT-2) |
+| EXP1/EXP2 | — | SD/LCD/Beeper/Push Button Rotary Encoder/RESET |
+| ISP1 | — | Shares SD SPI bus, As SD is disabled in klipper those pins could still be used |
+| ISP2 | — | Not usable — dedicated to USB-bridge-chip (ATmega16U2) could be used to reflash |
 | JTAG block | PF4(TCK)/PF5(TMS)/PF6(TDO)/PF7(TDI) | Free, general GPIO — but needs a firmware-level "release from JTAG" step (`set_digital_out`/menuconfig) before use as plain I/O; not automatic |
 | I2C pair | PD1(SDA)=EXP3 pin10, PD0(SCL)=EXP3 pin9 | Free but reserved as a pair; PD1 currently also carries the E0 UART wire |
 | Thermistor T0–T3 | PK7/PK6/PK5/PK4 | Free |
-| Thermistor THB | PK3 | **Occupied** — bed thermistor (ATC Semitec 104GT-2) |
-| ISP1 | — | Not usable — shares SD/LCD SPI bus + RESET, dedicated to main-MCU emergency reflash only |
-| ISP2 | — | Not usable — dedicated to USB-bridge-chip (ATmega16U2) reflash only |
-| EXP3 pins 2/4/6/8 | +5V/GND/PWM_2/A10 | **Occupied** — physical footprint of PT100 extruder-temp board |
-| EXP3 pin 7 (A9) | PK1 | Free |
-| Part-cooling fan | PH4 | **Occupied** — `[fan]` |
-| Hotend fan | PH5 | **Occupied** — `[heater_fan hotend_fan]`, thermally linked to extruder, 40°C on threshold |
-| Bed heater | PH6 | **Occupied** — `[heater_bed]` |
-| Extruder heater | PE4 | **Occupied** — `[extruder]` |
 
-## Legacy Marlin M503 Dump (for cross-checking any future recalibration)
+## X/Y Motion & Belt
+
+- **Belt:** GT2 timing belt, 2mm pitch. Y-axis: two 690mm cut sections.
+- **X pulley:** GT2 20T, 5mm ID.
+- **Y drive:** GT2 16T (5mm ID) on the Y motor → GT2 36T (8mm ID) on the rear transmission bar — matches config's `gear_ratio: 36:16`.
+- **Y transmission bar outlets:** dual GT2 20T (8mm ID), driving the left/right Y side belts.
+- **Idler bearings:** F-604-ZZ flanged, 4mm ID × 12mm OD × 4mm W.
+
+## Extruder & Hotend
+
+- **Hotend:** E3D V6 all-metal, 1.75mm filament.
+- **Nozzle:** 0.6mm brass.
+- **Drive gear:** E3D Hobb-Goblin, 5mm ID.
+- **Heater cartridge:** 24V DC, 30W, 1700mm leads.
+- **Temp sensor:** PT100 RTD, 1700mm leads, via external PT100 amplifier board.
+- **Hotend fan:** 30×30×10mm, 24V.
+- **Part-cooling fan:** 40×40×20mm blower, 24V.
+
+## Z Probe
+
+- **Type:** Mini Differential IR height sensor (dc42/Duet3D design), signal wired to **Z-MIN (PC4)**, used in Klipper as `probe:z_virtual_endstop`.
+- **Probe offsets:** `x_offset: -65.0`, `y_offset: 0`
+- **Reference doc:** https://miscsolutions.wordpress.com/mini-height-sensor-board/
+- **Known issue:** sensor self-configures into digital-output mode (2 LED flashes = correct) only if it detects a pull-up on its OUT line within ~4 seconds of power-up; if Klipper hasn't finished booting and enabling that pin's pull-up in time, sensor defaults to analog mode (4 flashes) and gives bad/inconsistent readings. If the pullup resistor is set in klipper then unplugging and replugging it in will boot it into the correct mode. Klipper can not set the pull up resistor at boot so unless an external 10k resistor is added it will always boot into the wrong mode on power up.
+- **Bed surface affects IR reading quality:** readings only became reliably good after placing a piece of dark paper under the glass bed — the sensor's IR response is sensitive to what's on the far side of the glass.
+
+## Z Leadscrew
+
+- **This printer:** 8mm lead (T8×8 — 2mm pitch, 4-start). Confirmed by brass nut hole count (4) and E3D's commissioning manual. `rotation_distance: 8`.
+- **Older BigBox variant:** 2mm lead (T8×2, single-start, 8-hole nut). `rotation_distance: 2`. Changing this also changes the old-Marlin-equivalent steps/mm (400 ↔ 1600).
+- **ID method:** count the brass nut's thread grooves — 4 holes = 8mm, 8 holes = 2mm.
+
+## Power Supply
+
+- **Model:** Weho S-400-24.
+- **Output:** 24V DC @ 17A (400W).
+- **Input:** switchable 115V/230V AC.
+- **Mounting:** M3 screws, 5mm nylon isolator spacers, lower base plate.
+
+## Legacy Marlin M503 Dump
 
 ```
 Marlin 1.1.0-RC6
@@ -115,20 +156,12 @@ M145 S0 H220 B60 F0 / S1 H240 B120 F0      (material heatup presets)
 M301 P46.19 I5.28 D101.02 C100.00 L20      (hotend PID)
 M304 P336.00 I61.00 D462.40                (bed PID)
 M200 D3.00 / D0                            (filament diameter settings)
-M851 Z-3.00                                (Z probe offset)
+M851 Z-2.3                                 (Z probe offset)
 ```
 
-**Cross-check confirmed:** current Klipper `rotation_distance`/`microsteps` values reproduce the stock `M92` steps/mm exactly (X: 160, Z: 400, E: ≈281) — independent validation that current motor calibration is correct.
+## Useful Links
 
-## Motion Tuning Research Summary
-
-Full report saved as artifact earlier in this project (title: "Large-Format FDM on RUMBA and Klipper: Motion Baseline and TMC2209 Torque-Headroom Upgrade"). Key takeaways:
-- RUMBA/ATmega2560 has a hard Klipper step-rate ceiling (~99K steps/s across 3 simultaneous steppers @16MHz) — likely the real limiting factor before driver torque ever becomes one.
-- Extra driver current headroom (0.5A→1.36A RMS, ~2.7×) translates to roughly 2×–2.5× more usable acceleration, but much less velocity gain (velocity is inductance/back-EMF limited, not current limited).
-
-## Accuracy Reference Order (established via discussion, largest effect → smallest)
-
-1. Thermal shrinkage/warping during cooling (~0.2–0.3mm) — not fixable via motion/driver tuning.
-2. Nozzle line width (0.6mm) — hard floor on smallest resolvable XY feature; does **not** meaningfully limit Z/layer-height resolution.
-3. Mechanical backlash (leadscrew nut, belts) — several hundredths to a couple tenths of a mm; not yet directly measured, method documented (push-pull test w/ dial indicator or calipers, motor disabled).
-4. Step/microstep resolution — thousandths of a mm at 16 microsteps; already far finer than anything above it, not a meaningful lever.
+- **Original firmware source:** https://github.com/BigBox3D/Marlin/tree/Hybrid-Pro — the correct branch;
+- **RUMBA Reference:** https://reprap.org/wiki/RUMBA
+- **Display Reference:** https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
+- **Archive of the Build Manual:** https://web.archive.org/web/20161018063904/http://wiki.e3d-online.com/wiki/BigBox_Build_Manual
