@@ -4,14 +4,15 @@ Reference doc for this build. Update as things get done or priorities shift.
 
 ## In Progress
 
-- **IR Z-probe reliability fix**: Modified bed mesh so it probes dark parts of heater grid. Added a black napkin between the heater and the glass bed, causes a side effect of being ~10° C off. Investigating PEI plate as alternative bed.
-- **Z motors wired together (parallel) for now.** Splitting onto independent TMC2209 drivers (for `z_tilt` auto-leveling) is deferred for now. Current shared-driver current: `run_current: 1.6` (≈0.8A per motor). Once split: `1.36` per driver, matching X/Y/E0.
+- **PEI plate:** covered the glass bed with a magnet and sat the pei plate on top. IR issues returned due to steels scattering providing bad readings.
+- **BTT Eddy Duo:** Plugged into the raspberry pi and attached to the old ir probes mount on the print head. the ir probe has been moved to act the z endstop on the right side of the bed with a new adapter. Currently calibrating and testing.
 - **Filament runout sensor**: simple switch, straightforward — any free 3-pin endstop-style header (X-MAX or Y-MAX) works with zero extra setup. Just need to reterminate the ends and wire it in.
-- **Gantry squareness**: ~2mm front-to-back discrepancy after a manual adjustment attempt. Either try again or use Klipper's `[skew_correction]` module. Haven't noticed in actual prints yet.
+- **Cleanup Wiring:** Wiring things to be hidden with the new sensors added and the ir probe moved. 
 
 ## Complete
 
-- **TMC2209 UART bring-up**: X, Y, Z, and Extruder are live and confirmed working. Only **Z1** remains commented out, until split.
+- **Z motors wired together (parallel) for now.** Split to be controlled independently with new TMC2209 drivers. z_tilt setup and working. Decided to run the z motors at .8 and with stealth chop to prevent hum. Stealthchops accuracy issues aren't an issue for the z drivers with the leadscrew.
+- **TMC2209 UART bring-up**: X, Y, Z, and Extruder are live and confirmed working.
 - **IR Z-probe boot mode fix**: root cause confirmed — sensor needs to see a pull-up on its OUT line within ~4s of power-up to start in digital mode (2 LED flashes); board power-on is too slow for Klipper to have configured that pull-up in time, so it defaults to analog mode (4 flashes) and gives bad readings until unplugged/replugged. Installed a 10kΩ resistor from OUT to +5V, at the connector and removed the pull up resistor in klipper.
 
 ## Potential Upgrades
