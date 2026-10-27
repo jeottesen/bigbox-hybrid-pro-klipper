@@ -84,3 +84,11 @@ Same caveat as above: read from CAD, not measured on the printer.
 - Mounting: two **3.0mm holes 15.4mm apart** (at x=13.0, y=2.5 and y=17.9) plus a 6mm hole at (7.8, 20.3).
 - Hero Me ADXL345 mounts (`ADXL345 Mounts`, 14 variants) are built for boards with **14.0mm** hole spacing (3.4mm holes). The S2DW's 15.4mm spacing does not match any of them. Options: slot the mount holes by ~1.4mm, or print a small adapter plate. The "35mm" mounts match the board length but not the hole spacing.
 - Eddy Duo + S2DW both being USB devices on the Pi does not affect mounting, but cable routing and the Hybrid's free slot 2 are worth planning together.
+
+## Addendum 3: Photos of the current head
+
+- **Part fan:** label reads *Xinyujie XYJ24B4020H, DC24V 0.10A, ball bearing*, a standard **4020 radial blower**. Hero Me supports 4020 blowers (`Standard Ducts/4020 fans`, Single/Dual, Left/Right). The release has "4020L" and "4020W" duct variants; their meaning is not documented in the files, so measure the blower's outlet (and print one variant as a test) before committing.
+- **Extruder:** the black printed extruder with spring-loaded idler sits directly on top of the carriage, so this is a **carriage-mounted direct drive** (the Bowden question is settled). The motor is above the frame of the photos. Hero Me's extruder mounts replace this piece; the Hobb-Goblin is still not on its supported list.
+- **Hotend:** V6 hangs below the carriage with silicone sock, heatsink fins fully exposed, 30mm fan taped on the side. The stock duct outlet ends roughly level with the heater block bottom, consistent with the CAD-based nozzle estimate.
+- **Duct condition:** the printed stock duct around the heater block looks partly melted/deformed. Worth replacing regardless.
+- Both rods are 8mm bright steel; the carriage rides between them as in the CAD.
