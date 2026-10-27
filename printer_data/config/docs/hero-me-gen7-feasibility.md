@@ -239,3 +239,13 @@ Addenda 4 and 7-10 assumed the V6 hangs **~63mm below the Hero Me base**. That w
 - The extruder mounts above the carriage as it does now (filament drops through a bore into the V6 top). Hero Me's DD extruder mounts are made to bolt onto the collar mount/base top, so they would need adapting or replacing with a simple carriage-top mount.
 - Carriage length along the rods can be well under the stock ~100mm: 45mm LM8LUU per rod plus walls (~51-60mm) holds the 40mm collar mount and base.
 - Still to design/check: belt clamps and tensioner slot, X endstop microswitch (the stock ones are on the printhead per the build manual), IR/Eddy mount position, 4020 duct clearance to the rods, and the exact pocket and base-top screw geometry against the real Hero Me parts.
+
+## Status and how to resume (saved 2026-10-27)
+
+**Where we are:** Hero Me Gen7.4 has no part for the BigBox's 58mm two-rod carriage, so a new carriage must be designed. Best current plan (Addendum 11): a short stock-style carriage (2 x LM8LUU on 8mm rods, 58mm apart, ~51-60mm long, no longer than the stock ~100mm head) with the Hero Me Universal Base hung **under** it, the V6 collar mount in a pocket (34 across x 40 along the rods, ~19mm deep), extruder on top. Hotend stays centred and at stock nozzle height. Addenda 7-10 are partly superseded by 11 (the V6 height model was wrong).
+
+**Open items:** belt clamps and tensioner slot, X endstop microswitch (both on the stock printhead), Eddy mount position (community mount in Addendum 4), extruder choice/mount (Hobb-Goblin is not Hero Me supported; BMG/Orbiter/Sherpa Mini), 4020 duct choice (L vs W), 4010 heatsink fan swap, accelerometer mount (S2DW / ADXL345 V2.0 holes are 15.5mm, Hero Me's are 14.0mm), real measurements to confirm the CAD-derived numbers.
+
+**Not in the repo:** the downloaded Hero Me STL pack, the BigBox STEP files and the assembly model (large; re-download from Printables 39322, the E3D BigBox parts, and Thingiverse 5183700).
+
+**Scripts:** `hero-me-analysis-scripts/` has the Python used for the measurements (needs `cadquery`, `trimesh`, `numpy`, `matplotlib`, `py7zr`, `pypdf`; STEP/STL paths are hard-coded to the scratch layout used in this session).
