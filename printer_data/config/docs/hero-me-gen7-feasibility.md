@@ -42,3 +42,25 @@ Hero Me attaches to a printer through a *Gantry Adapter* (`Gantry Adapters/<bran
 - Extruder `rotation_distance` and pressure advance if the extruder changes.
 - Possibly a new hotend fan config (4010 tach, see upgrade plan).
 - Added carriage mass: re-run input shaping, ideally with the ADXL345.
+
+## Addendum: findings from the BigBox STEP files
+
+Source: `STEP.zip` (`Hybrid_v1.1.0.`, `bigbox_dual_v1.0.0`, `transit_brackets_1.1.0`, `bigbox_v1.1.0`, `BB_FRAME_M3_NUT_TRAP`), parsed with CadQuery/OCC. Numbers are read from the CAD geometry, not measured on the machine. Verify with calipers before printing anything.
+
+- **Carriage (Hybrid, solid #1; 79.8 x 70.1 x 27.7mm):** two rod bores of ~15.4mm diameter on **8mm rods, 58.0mm apart**, horizontal, centred at the same height. Bore size suggests LM8UU-type (15mm OD) bearings.
+- **Hotend positions:** two groove-mount bores (16.2-16.5mm, i.e. E3D V6 groove mount) at **38mm pitch**, centred exactly between the rods, seat plane ~15mm below the rod axis. The dual head file (`bigbox_dual`) has a longer 109.5mm carriage with the two positions at **35mm** pitch. The Hybrid uses its own carriage and leaves slot 2 empty; it is not the dual carriage.
+- **Existing carriage mounting holes:** four 4.4mm holes in a ~26.7 x 38mm rectangle around the hotend seat (Hybrid). Candidate points to bolt a Hero Me adapter plate to; their purpose is unverified.
+- **Transit brackets:** three 8mm rods ~497mm long; two line up with the carriage bores (58mm apart), plus end brackets. Confirms 8mm rods; otherwise not relevant to Hero Me.
+- **Not in the CAD:** no nozzle or hotend body is modelled, so nozzle-tip height relative to the carriage is unknown. I did not establish which CAD axis maps to firmware X or Y.
+- **Hero Me side (measured from the STL mesh):** the Universal Base V2 is 41.6 wide x 51.2 x 38.5mm. Its rear mounting pattern, shared by the gantry adapters, is 4 holes at **32.0 x ~12.4mm** (3.2-3.4mm in adapters, ~4.1-4.4mm in the base). The hotend holes in the base are 22mm apart and the fan holes 30mm apart.
+
+### Implications
+
+- Hero Me's standard interface is just a 32 x 12.4mm four-hole plate, so the custom piece can be a simple adapter. It needs to bolt to the BigBox carriage's underside (or replace the Hybrid carriage's hotend-clamp area) and put the Hero Me base centred between the rods.
+- The Universal Base (41.6mm) fits inside the 58mm rod spacing, but only with ~42.5mm clear between bearing surfaces (58 - 15.4). Check clearance for the base, the duct wings and the heatsink fan against the bearing housings.
+- The Hero Me stack is taller than the stock hotend. The probe, bed-level distances and the Z travel (250mm bed Z) need rechecking.
+- The Hybrid's second hotend slot could carry a fan/duct, Eddy mount or ADXL345 if Hero Me replaces only slot 1.
+
+### Still needed from you
+
+Photos or measurements of the carriage underside and the actual bearing type, the nozzle-tip height below the carriage bottom, and whether the original carriage can be left in place.
