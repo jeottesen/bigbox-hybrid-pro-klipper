@@ -249,3 +249,25 @@ Addenda 4 and 7-10 assumed the V6 hangs **~63mm below the Hero Me base**. That w
 **Not in the repo:** the downloaded Hero Me STL pack, the BigBox STEP files and the assembly model (large; re-download from Printables 39322, the E3D BigBox parts, and Thingiverse 5183700).
 
 **Scripts:** `hero-me-analysis-scripts/` has the Python used for the measurements (needs `cadquery`, `trimesh`, `numpy`, `matplotlib`, `py7zr`, `pypdf`; STEP/STL paths are hard-coded to the scratch layout used in this session).
+
+## Addendum 12: E3D BigBox Dual Titan IDEX (alex9779, Thingiverse 2350827, CC BY-NC) as inspiration
+
+Parts analysed from the STLs and gallery images (no assembly file). It is a fixed (no cartridge) IDEX head for the BigBox with horizontally laid Titan extruders, BLTouch or IR probe, blower ducts and IGUS Series 4 drag-chain anchors.
+
+**Same hardware, different gantry geometry.** The carriage bores are 15.5mm and the bearing clamps are exactly 45mm long, so it uses the same **8mm rods and 45mm LM8LUU** bearings as the stock machine. But each carriage cradles its two bearings in a **diagonal/stacked arrangement only ~30mm apart** (read from cross-section fits of the carriage and clamp STLs, and the gallery shows separate rod pairs per head), not the stock 57.8mm side-by-side pair. It cannot be dropped onto the stock rods; the Y-axis idler/clamp parts are also redesigned. Confidence is moderate: no assembly file was available to confirm the rod layout.
+
+| | IDEX carriage (per head) | Stock Hybrid carriage | Our Hero Me plan (Addendum 11) |
+|---|---|---|---|
+| Along the rods | **45mm** (= bearing length) | 70mm carriage, ~100mm with bearing traps | ~51-60mm |
+| Across / tall | 72.5 x 39-43mm | 79.8 x 27.7mm | ~79 x ~28mm |
+| Printed volume | carriage ~26 cm3 + 2 clamps ~23 cm3 | carriage 66 cm3 + traps | carriage est. 20-30 cm3 |
+
+**Worth borrowing**
+1. **Clamp-style bearing seats.** The bearing drops in from the side and a 45 x ~30 x 17mm printed clamp closes it; no pressing in, easy to replace, and the carriage is exactly bearing-length long.
+2. **Integrated belt clamp "combs"** in the carriage bottom, with belt-side and idle-side variants and a belt clearance already adjusted by 2mm (Update 2). A direct model for our belt clamp and tensioner problem.
+3. **Open front around the hotend** for installation and cabling, instead of a closed pocket.
+4. **Horizontally laid extruder motor**, which lowers the head and allows short NEMA14s (author suggests a 14HS20-1504S, 52mm, 40 Ncm, similar torque to the stock X motor) or NEMA17s. Hero Me supports the Titan too (E3D-Online Titan mounts), but we do not have one.
+5. **Probe as close to the hotend as possible** (30 x 15 x 33mm mount): the same goal as bringing the Eddy near the nozzle.
+6. **IGUS Series 4 chain anchors** if a drag chain for the head cabling is wanted.
+
+**Not transferable:** the rod layout, the Titan-specific mounts, the 5015-style blower ducts and BLTouch ducts, and anything dual-head.
