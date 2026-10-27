@@ -169,3 +169,23 @@ Schematic view along the rods (from the STEP and STL geometry; V6 shown with its
 - **B.** A plate-mounted Hero Me puts the nozzle **~87mm from the rod mid-plane**, outside the rods, and the carriage cannot be narrower than the rod spacing, so this offset is hard to avoid with a "plate behind the base" design. Effects: a tipping load on the two rods, a shifted reachable area on the printer axis perpendicular to the rods (spare travel beyond the bed offsets some of it; check against your `position_max` values), and the extruder ends up on the base instead of on the carriage.
 - **C.** Base under the carriage keeps the nozzle centred but drops it ~56mm and leaves no room for the extruder above it.
 - Unverified: the Hero Me nozzle height (relies on the collar-mount orientation), and which printer axis (X or Y) runs along the rods.
+
+## Addendum 8: Is there a Hero Me carriage that replaces the BigBox one?
+
+**No.** Hero Me's rod-and-bearing carriages (`i3 Clone 8mm/10mm Linear Rod X Carriage`, `Anycubic i3 Mega S X Carriage`, `Anet A8 Plastic X Carriage`) all put the two bearings **~45mm apart** (Prusa-i3 style), measured by fitting circles to the STL cross-sections. The BigBox rods are 58mm apart. Everything else in `Gantry Adapters` bolts to a printer's existing carriage, or uses MGN rails, V-wheels or Wham Bam/PrinterMods hardware. A new carriage has to be designed. The Hero Me side of it is simple: it only needs the 32.0 x 12.5mm four-hole pattern on a flat face.
+
+### Design target for a new carriage
+- 2 x 8mm rods at 58.0mm; 4 x LM8UU (15mm OD, 24mm long) or 2 x LM8LUU; belt clamp; endstop flag if used.
+- Minimum footprint is roughly **79 across x ~52 along the rods x ~22 tall**, versus 79.8 x 70.1 x 27.7 for the current Hybrid carriage: narrower is not possible, shorter is.
+- Rough plastic volumes (solid, ignoring infill): current carriage 66 cm3; Hero Me base 24.6 + V6 collar mount 6.9 + skirt 3.1 + one 4020 duct 11.6 = ~46 cm3, plus the new carriage (est. 20-30 cm3) and an extruder mount. Real weight savings depend mostly on the extruder and motor: a geared extruder (BMG, Orbiter, Sherpa Mini) allows a lighter motor than the current ungeared Hobb-Goblin on a full-size NEMA 17 and still keeps direct drive.
+
+### Two ways to orient the plate
+![Top view](herome-topview.png)
+
+| | B. Plate on the side face | D. Plate on the end face (along the rods) |
+|---|---|---|
+| Nozzle | **87mm** to the side of the rod mid-plane | stays **on** the rod mid-plane, **~73mm** ahead of the carriage centre along the rods |
+| Effect | load tips across the rod pair; shifts reach on the perpendicular axis | loses travel along the rods at one end (the base sticks out ~56mm beyond the carriage), against ~340mm of travel for a ~300mm bed |
+| Fit | n/a | the base (41.6 wide) sits between the rods (~50mm clear); ducts hang far below the rods |
+
+D keeps the nozzle on the rod mid-plane, which matches how the stock head is balanced, and is the better starting point. Bearing span along the rods (~52mm carriage) versus a ~73mm lever arm is the thing to watch: a longer carriage (LM8LUU, ~60-70mm) is cheap insurance. Check before committing: the exact travel loss at the end block, which printer axis runs along the rods, and clearance between the base and the end block.
