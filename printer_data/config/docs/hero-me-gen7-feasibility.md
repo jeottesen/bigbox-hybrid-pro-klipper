@@ -131,3 +131,41 @@ All 14 Hero Me ADXL345 mounts have **14.0mm** board-hole spacing (measured from 
 - **All 14 Hero Me ADXL345 mounts** were sliced and checked: every one has two round ~3.4mm board holes **14.0mm apart** (three rendered and inspected visually; no slots). None match 15.5mm.
 - **The Hero Me bases do have ADXL holes**: the Universal Base V2 has two 3.0mm blind holes (~2.6mm deep), **~14.2mm apart**, on the base body. The DropEffect, Switchwire and Seckit bases and the Universal Skirt have similar pairs at ~14.0mm. These are the standard 14mm ADXL345 pattern and do not match 15.5mm either.
 - **Options:** (1) a small adapter plate (14.0mm to Hero Me / 15.5mm to the board) or editing a mount STL to move the holes to 15.5mm; (2) the manual's heater-block method for short tuning runs only (board rated to 85C).
+
+## Addendum 7: Gantry and base measurements, compatibility, positioning sketch
+
+![Positioning sketch](herome-positioning.png)
+
+Schematic view along the rods (from the STEP and STL geometry; V6 shown with its fins and heater block only, no ducts or fans). A = stock; B = Hero Me base on a plate against a carriage face; C = Hero Me base directly under the carriage.
+
+### Current gantry (from the CAD, not measured on the machine)
+| Item | Value |
+|---|---|
+| Rods | 8mm, two, **58.0mm apart**, horizontal and level with each other |
+| Carriage (Hybrid) | 79.8 (across the rods) x 70.1 (along the rods) x 27.7mm tall; bearing bores ~15.4mm |
+| Hotend slots | 2, 38mm pitch, centred between the rods; V6 groove-mount bores 16.2mm |
+| Clear room between the bearings | ~42.5mm (58 - 15.4) |
+| Nozzle tip (est.) | ~60mm below the rod axis, ~45mm below the carriage underside |
+| Rod end blocks | 72 x ~50-70 x 49mm; ~412mm clear between them, ~340mm of carriage travel |
+| Carriage-to-rod fit | the two bearings force the carriage to be ~75-80mm across; it can't be made much narrower |
+
+### Hero Me Universal Base V2
+| Item | Value |
+|---|---|
+| Body | 41.6 wide x 51.2 deep x 38.5mm tall |
+| Rear gantry interface | 4 holes, 32.0 x 12.5mm |
+| Hotend axis | 9mm behind the front face, **42.2mm in front of the rear face**; hotend bolts to the underside with a 22mm hole pair |
+| Extruder | mounts on the top (DD risers / extruder mounts) |
+| Nozzle tip | ~63mm below the base underside with a V6 collar mount (est.) |
+| ADXL holes | two 3.0mm blind holes, ~14.2mm apart |
+
+### Compatibility summary
+| Compatible with the BigBox as-is | Needs adapting | Not compatible |
+|---|---|---|
+| V6 collar mount V3 + collar skirt V2 (+ spacers), 4020 ducts (Single/Dual, Long/Tall variants), cable towers, Universal Base itself | 4010 heatsink fan (swap from 30mm), BMG-style DD extruder (replaces Hobb-Goblin), Eddy mount (community one, check on V6), ADXL mount (14 vs 15.5mm) | every Hero Me gantry adapter. The nearest, the i3-clone 8mm-rod carriage, has bores **~43mm** apart, not 58mm |
+
+### What the sketch shows
+- **A.** Stock keeps the heavy parts centred between the rods.
+- **B.** A plate-mounted Hero Me puts the nozzle **~87mm from the rod mid-plane**, outside the rods, and the carriage cannot be narrower than the rod spacing, so this offset is hard to avoid with a "plate behind the base" design. Effects: a tipping load on the two rods, a shifted reachable area on the printer axis perpendicular to the rods (spare travel beyond the bed offsets some of it; check against your `position_max` values), and the extruder ends up on the base instead of on the carriage.
+- **C.** Base under the carriage keeps the nozzle centred but drops it ~56mm and leaves no room for the extruder above it.
+- Unverified: the Hero Me nozzle height (relies on the collar-mount orientation), and which printer axis (X or Y) runs along the rods.
