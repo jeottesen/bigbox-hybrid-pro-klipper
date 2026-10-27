@@ -307,3 +307,8 @@ Gives a narrower carriage but needs reprinted end blocks and a rerouted belt, ch
 
 ### Needed from the printer
 Motor body length; idler arm and spring design; belt height above the rod and how it is clamped; X home margin to the end block; V6 fan side; Eddy offset target.
+
+## Addendum 14: Clarifications (owner)
+- **Extruder motor:** Wantai `42BYGHMB09L20P4.5-17-X` (from `printer-spec-sheet.md`; same as X and Y), 0.9deg, 1.7A, 400 full steps. Klipper `rotation_distance: 22.694` for the extruder means an effective hob diameter of ~7.2mm at 1:1, i.e. a bare Hobb-Goblin on the motor shaft (ungeared). The model number does not give the body length and a web search did not find the datasheet: **measure the body length** (flange face to rear) with calipers. Rough guess only: ~40mm class given the torque.
+- **V6 fan** is on the right now but the clip can be rotated, so its side is a free design choice (front of the fins is the plan).
+- **Correction on Hero Me and direct drive:** Hero Me does support direct drive, with extruders on its list (BMG, Orbiter, Sherpa, Titan, LGX, the Creality/MK8-style single gear and others). What it does not have is a mount for the BigBox's own printed extruder (bare Hobb-Goblin on the motor with a printed idler arm and spring). Using Hero Me would therefore mean swapping the extruder body for a supported one **and** the 30mm hotend fan for a 4010 (its base only supports 4010/4020 heatsink fans), and the carriage/adapter for the 58mm rods has to be custom either way. With the motor, hotend and fans fixed, that leaves little reason to use the Hero Me base, which is why the brief went custom. If those two swaps become acceptable, Hero Me could be revisited.
