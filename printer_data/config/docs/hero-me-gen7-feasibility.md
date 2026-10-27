@@ -1,0 +1,44 @@
+# Hero Me Gen7.4 (Release 4) Feasibility
+
+Analysis of the Hero Me Gen7.4 printhead (Release 4, July 2023; docs "Read Me First V4.1", "Printer-Component Support V4.1", Change Log V1.6, plus the STL pack) against this printer.
+Source files are not stored in this repo (STL pack is ~255 MB extracted); re-download from https://www.printables.com/model/39322.
+
+## Verdict
+
+**Probably yes, with one custom part.** Every component except the X-carriage mount is supported. The BigBox is not on the supported printer list (115+ models), so there is no ready-made *Gantry Adapter* for its X carriage. That adapter is the only piece that must be designed or adapted.
+
+## Part-by-part
+
+| Area | Current | Hero Me fit | Notes |
+|---|---|---|---|
+| Hotend | E3D V6, 1.75mm, 0.6mm nozzle | **Supported** | Base max hotend width 26.8mm; V6 fits. Use the *E3D V6 / Revo Six / Dragonfly BMO* **Collar Mount V3** + matching **Collar Skirt V2** (`Hotend Mounts/Hotends`, `Hotend Mounts/Skirts`). 1/1.5/2/2.5mm collar spacers are included for height tuning. |
+| Heatsink fan | 30x30x10 24V axial | **Mismatch** | Hero Me heatsink fan is 4010 (or 4020) axial. Swap to a 4010 24V — this is already on the upgrade plan (3-wire tach 4010). |
+| Part-cooling fan | 4020 blower, 24V | **Supported** | `Part Cooling Ducts/Standard Ducts/4020 fans` (Single 4020L/4020W, Left/Right V3; dual also available). "Long Ducts" and "Tall Ducts" variants exist for different nozzle protrusion. Duct clearance with a 0.6mm nozzle should be checked with `Options/HMG7 Duct Offset Check`. |
+| Extruder | Hobb-Goblin gear on Wantai 42BYGHMB09L20P4.5-17-X (0.9°, 1.7A) | **Needs a supported extruder** | Hobb-Goblin is not in the list. Supported direct-drive options: Bondtech BMG (and clones), BMG-M, Orbiter 1.5/2.0, Sherpa Mini/Micro, Titan, LGX, etc. Whether the current extruder is carriage-mounted or Bowden should be confirmed; Hero Me is designed for direct drive but has a Bowden base cap/riser too (`Options/HMG7 Bowden Base Cap`, `6mm Bowden Riser`). Switching extruder changes `rotation_distance`. |
+| Z probe | BTT Eddy Duo (was IR, bracket at x_offset -65) | **No dedicated mount** | Closest are the Beacon3D mounts (`ABL Mounts/Beacon3D ABL Sensor`; same flat-coil-PCB style sensor, 17-21mm mounts + spacers). Eddy Duo PCB dimensions differ from Beacon, so expect to adapt/design a bracket. Benefit: the probe would sit much closer to the nozzle than the current -65mm offset, restoring usable bed area. Re-run Eddy calibration after any move. |
+| Accelerometer | none (planned ADXL345) | **Supported** | 14 mounts in `ADXL345 Mounts`. |
+| Cable mgmt | -- | Optional | 22 towers/tubes in `Cable Management`. |
+| X carriage | **unknown, needs measuring** | **Not listed** | See below. |
+
+## The X-carriage question
+
+Hero Me attaches to a printer through a *Gantry Adapter* (`Gantry Adapters/<brand>`) which bolts to the carriage and presents a standard interface to the *Base*. Options, in order of effort:
+
+1. **Universal Base V2** (`Base/HMG7.2 Universal Base V2.stl`, 41.6 x 51.2 x 38.5mm) plus a custom adapter modelled to the BigBox carriage hole pattern. Precedent: `Seckit SK-GO` (also an unusual carriage) uses a custom base + adapter.
+2. If the BigBox X axis is smooth rods with LM8UU-type bearings, the **i3 Clone 8mm Linear Rod** adapter or X carriage (`Gantry Adapters/Reprap i3 - Prusa- Clones`; adapter 40 x 28 x 12mm, carriage 22 x 66 x 52mm) may be adaptable or a good starting point. *Not verified that the BigBox matches this.*
+3. Replace the carriage with a Hero Me-compatible one (also needs belt clamp design for the BigBox belt layout).
+
+## What is needed to finish this
+
+- Photos of the X carriage from front, back and top, with the hotend/extruder removed if possible.
+- Measurements: X rod/rail diameter and spacing, carriage bearing type, mounting hole pattern and thread size, belt attachment style, and available Z clearance below the carriage.
+- Confirm whether the extruder is currently on the carriage (direct) or elsewhere (Bowden), and its stepper body length.
+- Hotend: actual nozzle-tip to carriage-mount distance, and whether the heater block is stock E3D V6 size.
+- Confirm part-cooling blower model (some 4020 blowers differ in outlet width; L vs W duct variants depend on this).
+
+## Klipper-side changes after a swap
+
+- New probe `x_offset`/`y_offset` and `z_offset`; `bed_mesh` and `z_tilt` bounds in `printer.cfg` follow from the new offset. Eddy calibration must be redone.
+- Extruder `rotation_distance` and pressure advance if the extruder changes.
+- Possibly a new hotend fan config (4010 tach, see upgrade plan).
+- Added carriage mass: re-run input shaping, ideally with the ADXL345.
