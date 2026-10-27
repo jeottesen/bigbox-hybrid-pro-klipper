@@ -189,3 +189,17 @@ Schematic view along the rods (from the STEP and STL geometry; V6 shown with its
 | Fit | n/a | the base (41.6 wide) sits between the rods (~50mm clear); ducts hang far below the rods |
 
 D keeps the nozzle on the rod mid-plane, which matches how the stock head is balanced, and is the better starting point. Bearing span along the rods (~52mm carriage) versus a ~73mm lever arm is the thing to watch: a longer carriage (LM8LUU, ~60-70mm) is cheap insurance. Check before committing: the exact travel loss at the end block, which printer axis runs along the rods, and clearance between the base and the end block.
+
+## Addendum 9: Rod and bearing specs from the manual; belt and travel check
+
+**Specs (from the E3D manual, per owner):** rods `rod-G.H.SS-8-484`, 8mm x 484mm; bearings `LM8LUU`, 8mm ID x 15mm OD x **45mm** long.
+
+- **CAD agrees.** The stock carriage has 15.44mm bores with a **45mm bearing seat** on each rod, so it uses **one LM8LUU per rod** (2 bearings total, not 4). The rods are 484mm, ~412mm of which is clear between the end blocks, so ~36mm of each rod sits inside an end block.
+- **New carriage length:** 45mm bearing + ~3mm wall each end, so **~51mm** along the rods (stock is 70.1mm). Keep the LM8LUU: one long bearing per rod resists tipping better than two short ones. This supersedes the "4 x LM8UU" assumption in Addendum 8.
+- **Belt clamp is on the carriage end faces, between the rods, at about rod-axis height** (M3 holes at X = -50/-75/-69, Z = 692-703, drilled along the rods; the photos show the belt entering at that height). A Hero Me plate on an end face (option D) would sit in the belt's path.
+  - Fix: put the bolt pattern **above the belt**, at Z >= ~719 (rod axis 696.8, so ~22mm above it). Base underside is then ~706, and the nozzle tip ends up **~6mm higher than stock** (~643 vs 636). The carriage then needs a taller "tower" on the plate end, and both belt clamps stay on the lower part of the end faces. Measure the real belt height to confirm.
+  - Option B (side plate) does not touch the belt but has the 87mm sideways offset.
+- **Travel check for option D** (positions measured along the rods from the rear end block's inner face; estimates from CAD):
+  - Stock: carriage 70.1mm, nozzle at the centre, nozzle reach ~35 to ~377mm (342mm window).
+  - Option D: carriage 51mm, base overhangs the front by ~56mm, nozzle ~73mm ahead of the carriage centre. Nozzle reach ~98 to ~403mm (305mm window).
+  - A 300mm axis still fits in 305mm, but the window moves ~63mm toward the base side, so the bed-edge position decides what is lost: roughly **20-60mm at the rear end** unless the rear end block is shortened or moved. Needs the real bed position and which printer axis runs along the rods.
