@@ -271,3 +271,39 @@ Parts analysed from the STLs and gallery images (no assembly file). It is a fixe
 6. **IGUS Series 4 chain anchors** if a drag chain for the head cabling is wanted.
 
 **Not transferable:** the rod layout, the Titan-specific mounts, the 5015-style blower ducts and BLTouch ducts, and anything dual-head.
+
+## Addendum 13: Design brief v0 for a custom compact carriage (supersedes the Hero Me base plan)
+
+**Decision (owner):** keep the **E3D V6, the 30x30x10 hotend fan, the 4020 24V blower, the stock NEMA17 pancake direct-drive extruder (Hobb-Goblin + spring idler) and the existing X/Y motors and belts**; stay **direct drive**. Drag chains are optional. IDEX is a stretch goal. Alternative proposal allowed: rearrange the rods like the IDEX design.
+
+**Consequence:** Hero Me's base is built around a 4010 heatsink fan and its extruder mounts do not include a Hobb-Goblin, so with those parts fixed it is no longer a good fit (Addendum 11 is retired as the plan). Hero Me/IDEX remain design references only.
+
+Sources used: the crawled wiki manual (`bigbox-manual/`, read only), the full assembly model (head extents and V6 axis), the STEP files, the Hero Me and IDEX parts. The crawl has no Hybrid direct-extruder pages (listed in its `MISSING.md`), so the stock idler/extruder arm geometry comes from the CAD only.
+
+![Stock head and constraints](stock-head-and-constraints.png)
+
+### Measured from the stock head (assembly model)
+- V6 axis is centred between the rods (rods 57.8mm apart); nozzle tip 61.2mm below the rod axis; V6 top at rod-axis height.
+- Head extends 57mm to one side and 45mm to the other of the nozzle along X, ~102mm total: that is why the manual says the Hybrid needs a case cut (or the "lifted" carriage) to reach the full 300mm.
+- Motor/idler block sits at Z' +22 to +63 above the rod axis, behind the V6. Hobb/filament line ends ~43mm above the V6 top.
+
+### Design rules
+1. **Carriage <= 50mm long along the rods, nozzle on its centre.** With ~406mm clear between end blocks the nozzle then reaches ~356mm, so a full 300mm needs no frame cutting and leaves ~25mm spare each side.
+2. **Same rod and bearing hardware:** 2 x 484mm 8mm rods, one LM8LUU (45mm) per rod, clamp-style bearing seats like the IDEX parts, 57.8mm spacing.
+3. **Motor as low as the geometry allows.** The 42mm-wide motor cannot sit between the bearings (only ~42.5mm of clear room), so its underside must clear the bearing tops: lowest Z' = +10.5 versus +22 stock (~11mm lower, filament path ~31mm instead of ~43mm). Two orientations to evaluate: axis along the rods, or axis across the rods like stock.
+4. **Fan placement under the carriage:** 30x30x10 heatsink fan in front of the fins (below the bearing level, so it adds nothing to the head length); 4020 blower beside/behind with a duct to the nozzle.
+5. **Belt:** belt-side and idle-side variants, integrated belt-clamp comb (as in the IDEX carriage), plus the tensioner and X microswitch features the stock head has (per the manual's commissioning page).
+6. **Probe:** the Eddy (and IR) mount on the carriage as close to the nozzle as possible.
+7. **Optional:** M3 anchor points for a generic drag chain; nothing requires it.
+
+### Stretch goal: IDEX
+Klipper supports it (`[dual_carriage]`). With two <=50mm carriages and centred nozzles, both heads can reach a full 300mm: head A reaches ~111..411, head B parks at ~436+, and B's centre can go to ~467, so it fits with only ~6mm of slack. It needs a second X motor, belt and endstop, a second hotend/extruder and blower, plus mirrored carriage variants. Designing the carriage as a mirrorable left/right pair now costs almost nothing.
+
+### Alternative B: IDEX-style rods (~30mm apart)
+Gives a narrower carriage but needs reprinted end blocks and a rerouted belt, changes the nozzle-to-rod relationship, and the rod layout could not be confirmed from the files. Not the first choice.
+
+### Plan
+1. Carriage core: bearing seats and clamps, belt comb, V6 groove clamp (parametric, with a test print of the seats). 2. Extruder motor/idler mount. 3. Heatsink fan, blower duct, Eddy mount, microswitch. 4. Optional chain anchors. 5. Mirrored IDEX variant.
+
+### Needed from the printer
+Motor body length; idler arm and spring design; belt height above the rod and how it is clamped; X home margin to the end block; V6 fan side; Eddy offset target.
