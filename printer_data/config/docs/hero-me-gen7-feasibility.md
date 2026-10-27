@@ -115,3 +115,12 @@ All 14 Hero Me ADXL345 mounts have **14.0mm** board-hole spacing (measured from 
 - The bolt-pattern centre sits ~13mm above the base underside. If it is placed level with the top of the Hybrid carriage (CAD Z 709.5), the nozzle ends up **~3mm lower** than stock: negligible. Placed at rod-axis height, it would be ~16mm lower.
 - **The bigger issue is not height but lateral offset.** Stock puts the hotend between the rods; Hero Me's interface is a vertical plate with the hotend 42mm out in front. Bolted to a carriage face (carriage is ~79mm deep), the hotend would sit ~80mm off the carriage centre, far from the rods (leverage, shifted usable area). A custom bracket that keeps the base near the rod plane is needed, or a replacement carriage designed around the Hero Me interface.
 - Confirm after any redesign: duct and Eddy plate clearance, bed clips, and Z home.
+
+## Addendum 5: BIGTREETECH S2DW V1.0 manual
+
+- Board is **33.25 x 15.5mm** per the manual (the STEP envelope of 35.2 x 16.2mm includes the USB-C overhang). Sensor is a **LIS2DW** on an **RP2040**, USB, 5V.
+- Manual's mounting drawing confirms the STEP: holes **2.5mm and 18.0mm from the end** (**15.5mm apart**), plus the larger 6mm hole at 20.5mm. So the 15.5mm spacing is real and still does not match Hero Me's 14.0mm ADXL345 mounts.
+- Two mounting methods shown (Voron StealthBurner example):
+  1. On a side bracket with dual holes at the official spacing.
+  2. Screws through the PCB and a rubber ring directly on the **heater block**. This needs no Hero Me ADXL mount, but the board is rated -40 to +85C and a V6 block runs 200C+, so only use it for short tuning runs, with the rubber spacer, and remove afterwards.
+- Klipper: `[lis2dw]` section (added Aug 2023, update Klipper if "not a valid section"), RP2040 firmware (no bootloader offset, W25Q080 CLKDIV 2, USB), sample config `sample-bigtreetech-lis2dw-v1.0.cfg` at github.com/bigtreetech/LIS2DW. Set `axes_map` from the board's silkscreen axes vs printer motion.
