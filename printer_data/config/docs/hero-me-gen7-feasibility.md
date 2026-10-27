@@ -214,3 +214,28 @@ Consequences:
 - **Which end gets the plate matters.** The nozzle gains reach on the plate side and loses it on the other. Loss on the far side = ~98mm minus the bed margin on that side (stock margin there is 35-77mm), i.e. ~20-60mm. Put the plate on the end where the bed edge is **closest** to the end block, so the loss falls on the side with more margin.
 - To recover reach, the rod end blocks (printed) could seat the 484mm rods less deeply (~36mm now), adding up to ~30mm of clear span.
 - Needed to quantify: with the carriage at the X home position and at X max, the gap from the carriage end to each end block.
+
+## Addendum 11: Full assembly model (ConnorM2009, Thingiverse 5183700) and a correction
+
+Source: `E3D Bigbox - 3D Model` (CC BY-NC), `Assembly_Bigbox_Hybrid_v2.step` / `Assembly.stl`, which includes the frame, rods, Hybrid head and electronics but no belts, fasteners or wires. Measured from the STL triangles; the part names list `LML8UU` bearings (= LM8LUU), `Rod X 484`, and `Hybrid_v1.1.0. X Carriage` with bearing traps, fan mount, IR mount and extruder arm.
+
+### Real X-axis numbers
+| Item | Value |
+|---|---|
+| X rods | two, 8mm, **57.8mm apart**, axis height Z=524.5 in that model's frame; ~482-484mm long |
+| Clear span between the X end blocks | **~406mm** |
+| Stock head length along X (carriage + two bearing traps + extras) | **~94-102mm** |
+| Stock head travel | 406 - ~100 = **~304-312mm**, i.e. almost exactly the 300mm `position_max`: **there is essentially no spare X travel** (this replaces the "~42mm spare" figure above) |
+| Nozzle tip | **61.2mm below the rod axis** (matches the earlier 60.4mm estimate) |
+
+### Correction to the Hero Me height model
+Addenda 4 and 7-10 assumed the V6 hangs **~63mm below the Hero Me base**. That was wrong. Evidence now: the V6 collar mount (40 x 34 x 18.4mm) screws to the **top** of the base with a **30.0mm bolt pair** (same spacing as the base's top holes); the heatsink fins and fan sit **inside** the base; the nozzle protrudes only **~7.5mm below the base underside**. The ducts also hang ~6mm below the base, consistent with this. So the nozzle is ~22mm below the base's rear bolt-pattern centre, not ~76mm. (Still inferred from STL geometry, not from a Hero Me assembly file.)
+
+### New best option: hang the base UNDER a stock-style carriage
+![Under carriage](herome-under-carriage.png)
+
+- Keep a carriage like the stock one (bearings at rod level, flat underside at the stock plane, ~Z 682 in the earlier frame) and bolt the Hero Me base under it with the collar mount sitting in a pocket in the carriage (pocket 34mm across the rods x 40mm along them, ~19mm deep, leaving ~4mm walls to the bearing bores).
+- Result: hotend **centred between the rods, 0mm sideways offset**; nozzle within **~0.5mm of stock height**; the base footprint stays inside the carriage footprint, so **no loss of X travel**. This removes the 87mm-offset and 73mm-travel-loss problems of options B and D.
+- The extruder mounts above the carriage as it does now (filament drops through a bore into the V6 top). Hero Me's DD extruder mounts are made to bolt onto the collar mount/base top, so they would need adapting or replacing with a simple carriage-top mount.
+- Carriage length along the rods can be well under the stock ~100mm: 45mm LM8LUU per rod plus walls (~51-60mm) holds the 40mm collar mount and base.
+- Still to design/check: belt clamps and tensioner slot, X endstop microswitch (the stock ones are on the printhead per the build manual), IR/Eddy mount position, 4020 duct clearance to the rods, and the exact pocket and base-top screw geometry against the real Hero Me parts.
