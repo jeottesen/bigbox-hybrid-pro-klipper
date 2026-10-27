@@ -64,3 +64,23 @@ Source: `STEP.zip` (`Hybrid_v1.1.0.`, `bigbox_dual_v1.0.0`, `transit_brackets_1.
 ### Still needed from you
 
 Photos or measurements of the carriage underside and the actual bearing type, the nozzle-tip height below the carriage bottom, and whether the original carriage can be left in place.
+
+## Addendum 2: V6, Eddy and accelerometer STEP files
+
+Same caveat as above: read from CAD, not measured on the printer.
+
+### E3D V6 (`e3d-v6-hotend` snapshot, 30x30x10 fan and stock duct included)
+- Nozzle tip to top of heatsink: **61.2mm**. Heatsink 22.3mm diameter; the 16mm top flange (3.7mm) / 12mm groove (6mm) / 16mm lower flange match a standard groove-mount V6. Heater block 20 x 16 x 11.5mm.
+- **Nozzle position in the Hybrid carriage (estimate):** if the V6 top sits at the bore step (CAD Z 697.6), the **nozzle tip is ~45.5mm below the carriage underside and ~60.4mm below the rod axis**. This is inferred from the carriage bore, not modelled; the stock duct bottoms in the dual-head file sit ~1.3mm below that point, which supports it. Confirm with a ruler.
+- The V6 sits mostly inside the carriage between the rods (top of hotend roughly level with the rod axis).
+
+### BTT Eddy (`Eddy_Bigtreetech.stp`)
+- Envelope **18.9 x 17.0 x 33.8mm**, two solids (apparently two models of the same part, offset ~1.5mm). Two **3.3mm holes, 10.5mm apart**, 22.9mm from one end.
+- The model is a chunky block, and I could not tell which face holds the coil. Confirm orientation and sensing face before designing the mount.
+- Hero Me has no Eddy mount. Beacon3D mounts are the nearest, but this hole spacing (10.5mm) would need checking against them.
+
+### BigTreeTech S2DW accelerometer
+- Board **16.2 x 35.2mm**, 4.7mm tall including the USB-C connector at one end.
+- Mounting: two **3.0mm holes 15.4mm apart** (at x=13.0, y=2.5 and y=17.9) plus a 6mm hole at (7.8, 20.3).
+- Hero Me ADXL345 mounts (`ADXL345 Mounts`, 14 variants) are built for boards with **14.0mm** hole spacing (3.4mm holes). The S2DW's 15.4mm spacing does not match any of them. Options: slot the mount holes by ~1.4mm, or print a small adapter plate. The "35mm" mounts match the board length but not the hole spacing.
+- Eddy Duo + S2DW both being USB devices on the Pi does not affect mounting, but cable routing and the Hybrid's free slot 2 are worth planning together.
