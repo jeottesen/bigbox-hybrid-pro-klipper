@@ -92,3 +92,26 @@ Same caveat as above: read from CAD, not measured on the printer.
 - **Hotend:** V6 hangs below the carriage with silicone sock, heatsink fins fully exposed, 30mm fan taped on the side. The stock duct outlet ends roughly level with the heater block bottom, consistent with the CAD-based nozzle estimate.
 - **Duct condition:** the printed stock duct around the heater block looks partly melted/deformed. Worth replacing regardless.
 - Both rods are 8mm bright steel; the carriage rides between them as in the CAD.
+
+## Addendum 4: Community Eddy mount, ADXL comparison, height analysis
+
+### Eddy mount (Printables/Thingiverse "Hero Me 7.4 BTT Eddy Mount, version TZ-V6-2.0", Juri, May 2024)
+- Two parts: a **mount** (56 x 12.6 x 9.5mm, three M3 holes 6mm apart for attaching to the Hero Me body) and a **slide plate** (18.1 x 33.7 x 3.5mm) that holds the Eddy and adjusts in height. Plate holes for the Eddy are 10.5mm apart, which matches the Eddy STEP. STEP files are public so the mount can be adapted.
+- Built for the **TZ-V6-2.0** hotend (a V6-form-factor clone); the E3D V6 is the same groove-mount form but the mount needs checking against the actual body and duct clearance.
+- Author's assembly order: mount to the Hero Me body, set plate to ~2mm above the print plate, then fit the Eddy. M3x8 plate screw, M3x16 for the Eddy; hex screw heads must be <= 1.5mm tall (or thicken the plate).
+- Coil end of the Eddy (confirmed by owner): the wider end, **farther from the mounting holes** (Z=0 end in the STEP, 22.9mm from the holes).
+- License: CC BY-NC 4.0 (personal use fine, attribute the author).
+- Expect the probe offset to drop well below the current -65mm, but the true value needs the assembled geometry.
+
+### ADXL mounts vs S2DW
+All 14 Hero Me ADXL345 mounts have **14.0mm** board-hole spacing (measured from the STLs). The S2DW STEP shows 15.4mm. No BTT ADXL345 2.0 model was available to compare, so the "same profile" claim is unverified. Measure the physical board's hole spacing; if it is 15.4mm, slot the mount holes or print an adapter.
+
+### Height analysis (estimates; collar-mount orientation is inferred)
+| | Stock BigBox Hybrid | Hero Me (Universal Base + V6 collar mount) |
+|---|---|---|
+| Nozzle tip vs reference | 60.4mm below rod axis; 45.5mm below carriage underside | ~63mm below base underside; ~76mm below the centre of the 32 x 12.5mm rear bolt pattern |
+| Hotend position | centred between rods | **~42mm in front of the bolt plane** |
+
+- The bolt-pattern centre sits ~13mm above the base underside. If it is placed level with the top of the Hybrid carriage (CAD Z 709.5), the nozzle ends up **~3mm lower** than stock: negligible. Placed at rod-axis height, it would be ~16mm lower.
+- **The bigger issue is not height but lateral offset.** Stock puts the hotend between the rods; Hero Me's interface is a vertical plate with the hotend 42mm out in front. Bolted to a carriage face (carriage is ~79mm deep), the hotend would sit ~80mm off the carriage centre, far from the rods (leverage, shifted usable area). A custom bracket that keeps the base near the rod plane is needed, or a replacement carriage designed around the Hero Me interface.
+- Confirm after any redesign: duct and Eddy plate clearance, bed clips, and Z home.
