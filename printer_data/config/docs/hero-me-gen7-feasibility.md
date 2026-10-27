@@ -124,3 +124,10 @@ All 14 Hero Me ADXL345 mounts have **14.0mm** board-hole spacing (measured from 
   1. On a side bracket with dual holes at the official spacing.
   2. Screws through the PCB and a rubber ring directly on the **heater block**. This needs no Hero Me ADXL mount, but the board is rated -40 to +85C and a V6 block runs 200C+, so only use it for short tuning runs, with the rubber spacer, and remove afterwards.
 - Klipper: `[lis2dw]` section (added Aug 2023, update Klipper if "not a valid section"), RP2040 firmware (no bootloader offset, W25Q080 CLKDIV 2, USB), sample config `sample-bigtreetech-lis2dw-v1.0.cfg` at github.com/bigtreetech/LIS2DW. Set `axes_map` from the board's silkscreen axes vs printer motion.
+
+## Addendum 6: BTT ADXL345 V2.0 manual and Hero Me ADXL holes
+
+- The BTT ADXL345 V2.0 manual shows the **same board as the S2DW**: 33.25 x 15.5mm, mounting holes 2.5mm and 18.0mm from the end (**15.5mm apart**), 6mm hole at 20.5mm. Both boards share a footprint, so one answer covers both.
+- **All 14 Hero Me ADXL345 mounts** were sliced and checked: every one has two round ~3.4mm board holes **14.0mm apart** (three rendered and inspected visually; no slots). None match 15.5mm.
+- **The Hero Me bases do have ADXL holes**: the Universal Base V2 has two 3.0mm blind holes (~2.6mm deep), **~14.2mm apart**, on the base body. The DropEffect, Switchwire and Seckit bases and the Universal Skirt have similar pairs at ~14.0mm. These are the standard 14mm ADXL345 pattern and do not match 15.5mm either.
+- **Options:** (1) a small adapter plate (14.0mm to Hero Me / 15.5mm to the board) or editing a mount STL to move the holes to 15.5mm; (2) the manual's heater-block method for short tuning runs only (board rated to 85C).
