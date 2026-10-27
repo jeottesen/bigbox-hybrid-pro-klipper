@@ -203,3 +203,14 @@ D keeps the nozzle on the rod mid-plane, which matches how the stock head is bal
   - Stock: carriage 70.1mm, nozzle at the centre, nozzle reach ~35 to ~377mm (342mm window).
   - Option D: carriage 51mm, base overhangs the front by ~56mm, nozzle ~73mm ahead of the carriage centre. Nozzle reach ~98 to ~403mm (305mm window).
   - A 300mm axis still fits in 305mm, but the window moves ~63mm toward the base side, so the bed-edge position decides what is lost: roughly **20-60mm at the rear end** unless the rear end block is shortened or moved. Needs the real bed position and which printer axis runs along the rods.
+
+## Addendum 10: Axis correction (owner)
+
+Correction from the owner: **the rods the nozzle rides on are the X axis** (the CAD files are oriented arbitrarily, so I could not infer this). The Y axis has the gear and belt assembly and moves the whole X gantry on its own rods and bearings. Earlier "along the rods" = X, "across the rods" = Y.
+
+Consequences:
+- **Option D (plate on the carriage end face, nozzle ~73mm ahead along X)** only shifts the nozzle along X and leaves Y reach unchanged. Spare X travel: ~342mm of carriage travel for a 300mm bed (`position_max: 300`), so there is ~42mm to spare in stock.
+- **Option B (plate on the side face)** puts the nozzle ~87mm off in **Y**. Y has `position_max: 245` for a 200mm bed (~45mm spare), so B would cost at least ~40mm of Y reach, and the load would tip across the rod pair and load the Y gantry bearings too. D is the better option.
+- **Which end gets the plate matters.** The nozzle gains reach on the plate side and loses it on the other. Loss on the far side = ~98mm minus the bed margin on that side (stock margin there is 35-77mm), i.e. ~20-60mm. Put the plate on the end where the bed edge is **closest** to the end block, so the loss falls on the side with more margin.
+- To recover reach, the rod end blocks (printed) could seat the 484mm rods less deeply (~36mm now), adding up to ~30mm of clear span.
+- Needed to quantify: with the carriage at the X home position and at X max, the gap from the carriage end to each end block.
