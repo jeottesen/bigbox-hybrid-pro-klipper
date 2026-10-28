@@ -38,7 +38,18 @@ x0,x1,y0,y1=ix(-70.5),ix(-44.0),iy(346.0),iy(362.5)
 inlet[x0:x1+1,y0:y1+1,zin]=True
 solid[inlet]=False
 solid[:,:,-1]=True   # lid
-np.savez_compressed("sim/grid_%.2f.npz"%DX,solid=solid,inlet=inlet,origin=np.array([X0,Y0,Z0]),dx=DX)
+SOCK=(len(sys.argv)>2 and sys.argv[2]=="sock")
+if SOCK:
+    # APPROXIMATE silicone sock (the supplied sock file is Fusion-only and could not be read): open-top box shell around the heater block
+    sx0,sx1=ix(-62.4-9.75),ix(-62.4+9.75); sy0,sy1=iy(302.5-11.75),iy(302.5+11.75); sz0,sz1=iz(638.9),iz(652.6)
+    sock=np.zeros_like(solid); sock[sx0:sx1+1,sy0:sy1+1,sz0:sz1+1]=True
+    inner=np.zeros_like(solid); wl=max(1,int(round(1.5/DX)))
+    inner[sx0+wl:sx1-wl+1,sy0+wl:sy1-wl+1,sz0+wl:]=True; sock&=~inner
+    xx,yy=np.meshgrid(np.arange(nx),np.arange(ny),indexing='ij'); rr=np.sqrt(((xx+0.5)*DX+X0+62.4)**2+((yy+0.5)*DX+Y0-308.0)**2)
+    sock[rr<4.5]=False                                  # nozzle comes through the floor
+    sock[:,:,sz1+1:]=False
+    solid|=sock; print("sock cells",int(sock.sum()))
+np.savez_compressed("sim/grid_%.2f%s.npz"%(DX,"_sock" if SOCK else ""),solid=solid,inlet=inlet,origin=np.array([X0,Y0,Z0]),dx=DX)
 print("grid",nx,ny,nz,"cells %.2fM"%(nx*ny*nz/1e6),"solid fraction %.3f"%solid.mean(),"inlet cells",int(inlet.sum()))
 # connectivity check: can air reach the nozzle zone from the inlet?
 fluid=~solid; lab,n=ndimage.label(fluid)
