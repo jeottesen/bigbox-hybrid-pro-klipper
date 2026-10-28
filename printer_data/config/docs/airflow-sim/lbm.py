@@ -84,10 +84,10 @@ t=time.time()
 for s in range(STEPS):
     collide(f,solid,omega,w,c); stream(f,g,solid,inlet,c,opp,w,uin); open_bc(g,solid,w,c); f,g=g,f
     if (s+1)%PRINT==0:
-        rho=f.sum(0); ux=(c[:,0,None,None,None]*f).sum(0)/rho; uy=(c[:,1,None,None,None]*f).sum(0)/rho; uz=(c[:,2,None,None,None]*f).sum(0)/rho
+        rho=f.sum(0); cf=c.astype(np.float32); ux=np.tensordot(cf[:,0],f,axes=(0,0))/rho; uy=np.tensordot(cf[:,1],f,axes=(0,0))/rho; uz=np.tensordot(cf[:,2],f,axes=(0,0))/rho
         sp=np.sqrt(ux**2+uy**2+uz**2); sp[solid]=0
         am=np.unravel_index(np.argmax(sp),sp.shape); print("step",s+1,"at",am,"max|u| %.3f"%sp.max(),"rho mean %.4f max %.4f min %.4f"%(rho[~solid].mean(),rho[~solid].max(),rho[~solid].min()),"%.0f MLUPS"%((s+1)*nx*ny*nz/(time.time()-t)/1e6),flush=True)
         if not np.isfinite(sp).all(): print("UNSTABLE"); break
-rho=f.sum(0); ux=(c[:,0,None,None,None]*f).sum(0)/rho; uy=(c[:,1,None,None,None]*f).sum(0)/rho; uz=(c[:,2,None,None,None]*f).sum(0)/rho
+rho=f.sum(0); cf=c.astype(np.float32); ux=np.tensordot(cf[:,0],f,axes=(0,0))/rho; uy=np.tensordot(cf[:,1],f,axes=(0,0))/rho; uz=np.tensordot(cf[:,2],f,axes=(0,0))/rho
 np.savez_compressed(out,ux=ux.astype(np.float32),uy=uy.astype(np.float32),uz=uz.astype(np.float32),rho=rho.astype(np.float32),solid=solid,dx=DX,origin=G["origin"],uin=UIN)
 print("done in %.0f s"%(time.time()-t))
