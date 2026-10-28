@@ -4,16 +4,10 @@ A=importers.importStep("step/STEP/bigbox_v1.1.0.stp").solids().vals()
 carriage,front,back=A[65],A[66],A[64]
 # blower: its frame has Z=thickness (ear face at Z=0), outlet at -Y edge; map x->X, y->-Z, z->+Y, centre (X=-62.4, Z=667.6), ear face on the back plate at Y=344.2
 B=importers.importStep("fan/blower.step").solids().vals()
-import sys
-FLIP=(len(sys.argv)>1 and sys.argv[1]=="flip")
 def place_blower(s):
-    # base: rotate -90deg about X => x->X, y->-Z, z->+Y (ear face z=0 toward the plates)
-    r=s.rotate(cq.Vector(0,0,0),cq.Vector(1,0,0),-90)
-    if not FLIP: return r.translate(cq.Vector(-62.4,344.2,667.6))
-    # flipped: inlet face (z=20) toward the plates: rotate 180deg about Z (x->-X, z-axis stays vertical in this frame? use rotate about Z of the mounted frame)
-    r=r.rotate(cq.Vector(0,0,0),cq.Vector(0,0,1),180)      # x->-X, Y->-Y  (outlet stays at the bottom)
-    b=r.BoundingBox()
-    return r.translate(cq.Vector(-62.4,0,667.6)).translate(cq.Vector(0,344.2-b.ymin,0))
+    # (x,y,z)->(-x,z,y): outlet side (y=-20) goes to the bottom, ear face (z=0) against the back plate, outlet X span matches the mount's tray windows
+    r=s.rotate(cq.Vector(0,0,0),cq.Vector(1,0,0),90).rotate(cq.Vector(0,0,0),cq.Vector(0,0,1),180)
+    return r.translate(cq.Vector(-62.4,344.2,667.6))
 blower=[place_blower(s) for s in B]
 # V6 hotend (solids 0..3 of the E3D V6 STEP, axis along y_v, tip at y_v=-6.2, top at 55): x_v->+Y, y_v->+Z, z_v->+X ; axis at (X=-62.4,Y=308), top at Z=696.8
 V=importers.importStep("step2/v6/e3d v6.STEP").solids().vals()[:4]
@@ -40,7 +34,7 @@ import pickle
 asm=cq.Assembly(name="stock_single_head_cooling")
 cols={"carriage":(0.55,0.55,0.55),"front_plate":(0.2,0.45,0.85),"back_plate":(0.9,0.55,0.15),"blower_housing":(0.15,0.15,0.15),"blower_impeller":(0.3,0.3,0.3),"v6_nozzle":(0.8,0.65,0.1),"v6_block":(0.7,0.55,0.1),"v6_heatbreak":(0.8,0.8,0.8),"v6_heatsink":(0.75,0.75,0.78)}
 for n,s in parts.items(): asm.add(s,name=n,color=cq.Color(*cols[n]))
-asm.save("asm/assembly_A%s.step"%("_alt_flipped" if FLIP else ""))
+asm.save("asm/assembly_stock_fan_mount.step")
 print("saved")
 
 # ---- preview ----
@@ -58,4 +52,4 @@ for ax,(a,b,d,title,lim) in zip(axs,[(0,1,2,"top (X across rods, Y along rods)",
         T=tess[n]; o=np.argsort(T.mean(1)[:,d])
         ax.add_collection(PolyCollection(T[o][:,:,[a,b]],facecolors=[cols[n]]*len(T),edgecolors='none',alpha=0.5 if n=="carriage" else 0.95))
     ax.set_xlim(*lim[0]);ax.set_ylim(*lim[1]);ax.set_aspect('equal');ax.grid(True,alpha=.3);ax.set_title(title,fontsize=10)
-plt.tight_layout();plt.savefig("asm/assembly_A%s_preview.png"%("_alt_flipped" if FLIP else ""),dpi=60)
+plt.tight_layout();plt.savefig("asm/assembly_stock_fan_mount_preview.png",dpi=60)
