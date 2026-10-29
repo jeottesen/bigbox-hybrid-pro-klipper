@@ -78,3 +78,12 @@ Fan model: no blower body. A velocity inlet is placed across the shroud's duct m
 
 - **Reading:** at this standoff neither design leaves a side unserved, and the numbers do not show the new shroud as clearly better; the stock mount is stronger right at the nozzle, the shroud is stronger on the fan side and more uneven. Imposed flow, so this says nothing about how each design loads the fan.
 - **Correction to Run 6:** the stock mount's "front side almost unserved (0.12 m/s)" result applies only when the bed is 0.3 mm under the tip. With the bed 3 mm lower the front gets 3.24 m/s at 0.5 mm, so that weakness depends on print-surface standoff (the jet hits the surface behind the nozzle at a shallow height). Both runs are in this model, with its caveats.
+
+## Memory cap for the sim scripts
+`memcap.py` is used by `lbm.py`, `voxel_fine.py`, `voxel_C4.py` and `post_bed.py`. The cap defaults to **3 GB** and is set with `SIM_MEM_GB` (for example `SIM_MEM_GB=8 python lbm.py ...` on a bigger machine).
+- It sets an OS limit on the process's private memory, so a runaway allocation raises `MemoryError` in that process instead of pushing the machine into swap (checked: a 4 GB allocation fails under the 3 GB cap).
+- It estimates the memory a grid needs before allocating and stops with a readable message (`memcap: ... needs about X GB but the cap is Y GB. Use a coarser grid, crop the domain, or raise SIM_MEM_GB.`).
+- Chunking: surface sampling in the voxelisers uses chunks sized from the cap (at most 300k points, so results are unchanged); the solver's output fields (density and velocity) are computed in x-slabs rather than with whole-grid temporaries; `lbm.py` prints peak memory at the end.
+- Measured: the 2.0M-cell shroud grid at 0.5 mm uses 0.65 GB peak in the solver (estimate 0.72 GB). The solver state is about 170 bytes per cell, so 3 GB holds roughly 15M cells at most. The 0.5 mm stock grid (2.6M cells) needs about 0.9 GB.
+
+`render_views.py` makes the eight-view renders of both assemblies (in `../assemblies/renders/`).

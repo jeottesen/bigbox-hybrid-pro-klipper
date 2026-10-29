@@ -1,4 +1,6 @@
-import numpy as np, sys
+import numpy as np, sys, os
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+import memcap; memcap.apply()
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
 R=np.load(sys.argv[1]); out=sys.argv[2]; NXn,NYn,BED=float(sys.argv[3]),float(sys.argv[4]),float(sys.argv[5]); title=sys.argv[6]
 ux,uy,uz,solid=R["ux"],R["uy"],R["uz"],R["solid"]; dx=float(R["dx"]); O=R["origin"]; S=75.0

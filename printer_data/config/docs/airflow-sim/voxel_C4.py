@@ -1,16 +1,23 @@
 """Owner-supplied BB Dual shroud + V6 (slot 1, block toward -X) + approximate sock + Hybrid carriage + bed + NO blower body: flow injected straight across the shroud's duct mouth (fan 'fudged')."""
 import numpy as np, trimesh, sys
+import os
+sys_path_dir=os.path.dirname(os.path.abspath(__file__))
+import sys; sys.path.insert(0,sys_path_dir)   # python -I drops the script dir
+import memcap; memcap.apply()
+CH=memcap.chunk(200,hi=300_000)   # surface-sample points per chunk (about 200 bytes each with temporaries)
+
 from scipy import ndimage
 import cadquery as cq
 from cadquery import importers
 DX=float(sys.argv[1]) if len(sys.argv)>1 else 1.0
 X0,X1,Y0,Y1,Z0,Z1=-92.0,-16.0,276.0,352.0,628.0,672.0
 nx,ny,nz=int(round((X1-X0)/DX)),int(round((Y1-Y0)/DX)),int(round((Z1-Z0)/DX)); org=np.array([X0,Y0,Z0])
+memcap.require(nx*ny*nz*(12+4+4), 'voxel grid (about a dozen boolean arrays + labelling)')
 solid=np.zeros((nx,ny,nz),bool)
 def surf(m,fill=False):
     g=np.zeros_like(solid); n=int(min(4_000_000,max(30_000,m.area/((DX*0.4)**2))))
-    for c0 in range(0,n,300_000):
-        p,_=trimesh.sample.sample_surface(m,min(300_000,n-c0),seed=c0); i=np.floor((p-org)/DX).astype(int)
+    for c0 in range(0,n,CH):
+        p,_=trimesh.sample.sample_surface(m,min(CH,n-c0),seed=c0); i=np.floor((p-org)/DX).astype(int)
         ok=(i[:,0]>=0)&(i[:,0]<nx)&(i[:,1]>=0)&(i[:,1]<ny)&(i[:,2]>=0)&(i[:,2]<nz); i=i[ok]; g[i[:,0],i[:,1],i[:,2]]=True
     return ndimage.binary_fill_holes(g) if fill else g
 def tomesh(s):

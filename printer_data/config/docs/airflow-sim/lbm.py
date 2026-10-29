@@ -1,11 +1,14 @@
 """Cheap CPU lattice-Boltzmann (D3Q19, BGK) airflow test. Velocity inlet at the blower outlet, open sides, bounce-back solids.
 Strongly under-resolved and artificially viscous: only a qualitative look at where the air goes."""
-import numpy as np, sys, time
+import numpy as np, sys, time, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # python -I drops the script dir
+import memcap; memcap.apply()
 from numba import njit, prange
 G=np.load(sys.argv[1]); solid=G["solid"]; inlet=G["inlet"]; DX=float(G["dx"])
 PRINT=int(sys.argv[6]) if len(sys.argv)>6 else 1000
 STEPS=int(sys.argv[2]); NU=float(sys.argv[3]); UIN=float(sys.argv[4]); out=sys.argv[5]
 nx,ny,nz=solid.shape
+memcap.require(nx*ny*nz*(2*19*4+4*4+2), "LBM state (two 19-population float32 arrays + output fields)")
 c=np.array([[0,0,0],[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1],
             [1,1,0],[-1,-1,0],[1,-1,0],[-1,1,0],[1,0,1],[-1,0,-1],[1,0,-1],[-1,0,1],[0,1,1],[0,-1,-1],[0,1,-1],[0,-1,1]],dtype=np.int64)
 w=np.array([1/3]+[1/18]*6+[1/36]*12,dtype=np.float32)
@@ -76,6 +79,16 @@ def open_bc(g,solid,w,c):
                         v=g[i,xi,yi,zi]; r+=v; ux+=c[i,0]*v; uy+=c[i,1]*v; uz+=c[i,2]*v
                     ux/=r; uy/=r; uz/=r
                 feq_set(g,x,y,z,1.0,ux,uy,uz,w,c)
+
+def moments(f, slab=None):
+    """rho, ux, uy, uz (float32), computed in x-slabs so the temporaries stay small."""
+    nx_=f.shape[1]; rho=np.empty(f.shape[1:],np.float32); ux=np.empty_like(rho); uy=np.empty_like(rho); uz=np.empty_like(rho)
+    cf=c.astype(np.float32)
+    if slab is None: slab=max(1,min(nx_,memcap.chunk(19*4*4*ny*nz,share=0.15,lo=1,hi=nx_)))
+    for a in range(0,nx_,slab):
+        fs=f[:,a:a+slab]; r=fs.sum(0); rho[a:a+slab]=r
+        ux[a:a+slab]=np.tensordot(cf[:,0],fs,axes=(0,0))/r; uy[a:a+slab]=np.tensordot(cf[:,1],fs,axes=(0,0))/r; uz[a:a+slab]=np.tensordot(cf[:,2],fs,axes=(0,0))/r
+    return ux,uy,uz,rho
 f=np.empty((19,nx,ny,nz),np.float32); 
 for i in range(19): f[i]=w[i]
 g=f.copy(); uin=np.float32(UIN)
@@ -84,10 +97,10 @@ t=time.time()
 for s in range(STEPS):
     collide(f,solid,omega,w,c); stream(f,g,solid,inlet,c,opp,w,uin); open_bc(g,solid,w,c); f,g=g,f
     if (s+1)%PRINT==0:
-        rho=f.sum(0); cf=c.astype(np.float32); ux=np.tensordot(cf[:,0],f,axes=(0,0))/rho; uy=np.tensordot(cf[:,1],f,axes=(0,0))/rho; uz=np.tensordot(cf[:,2],f,axes=(0,0))/rho
+        ux,uy,uz,rho=moments(f)
         sp=np.sqrt(ux**2+uy**2+uz**2); sp[solid]=0
         am=np.unravel_index(np.argmax(sp),sp.shape); print("step",s+1,"at",am,"max|u| %.3f"%sp.max(),"rho mean %.4f max %.4f min %.4f"%(rho[~solid].mean(),rho[~solid].max(),rho[~solid].min()),"%.0f MLUPS"%((s+1)*nx*ny*nz/(time.time()-t)/1e6),flush=True)
         if not np.isfinite(sp).all(): print("UNSTABLE"); break
-rho=f.sum(0); cf=c.astype(np.float32); ux=np.tensordot(cf[:,0],f,axes=(0,0))/rho; uy=np.tensordot(cf[:,1],f,axes=(0,0))/rho; uz=np.tensordot(cf[:,2],f,axes=(0,0))/rho
-np.savez_compressed(out,ux=ux.astype(np.float32),uy=uy.astype(np.float32),uz=uz.astype(np.float32),rho=rho.astype(np.float32),solid=solid,dx=DX,origin=G["origin"],uin=UIN)
-print("done in %.0f s"%(time.time()-t))
+ux,uy,uz,rho=moments(f)
+np.savez_compressed(out,ux=ux,uy=uy,uz=uz,rho=rho,solid=solid,dx=DX,origin=G["origin"],uin=UIN)
+print("done in %.0f s, peak memory %.2f GB (cap %.1f GB)"%(time.time()-t,memcap.peak_gb(),memcap.cap_gb()))

@@ -1,5 +1,11 @@
 """Voxelise the stock single-head cooling assembly (carriage, two-piece fan mount, V6) on a 1 mm grid for the LBM test."""
 import numpy as np, trimesh, sys
+import os
+sys_path_dir=os.path.dirname(os.path.abspath(__file__))
+import sys; sys.path.insert(0,sys_path_dir)   # python -I drops the script dir
+import memcap; memcap.apply()
+CH=memcap.chunk(200,hi=300_000)   # surface-sample points per chunk (about 200 bytes each with temporaries)
+
 from scipy import ndimage
 from cadquery import importers
 import cadquery as cq
@@ -19,8 +25,8 @@ for name,s in parts.items():
     m=mesh(s)
     # memory-light surface voxelisation: dense area-weighted surface samples in chunks (trimesh.voxelized used >1 GB at 0.5 mm)
     part=np.zeros_like(solid); n=int(min(4_000_000,max(50_000,m.area/((DX*0.4)**2)))); rng=np.random.default_rng(0); org=np.array([X0,Y0,Z0])
-    for c0 in range(0,n,300_000):
-        pts,_=trimesh.sample.sample_surface(m,min(300_000,n-c0),seed=int(c0))
+    for c0 in range(0,n,CH):
+        pts,_=trimesh.sample.sample_surface(m,min(CH,n-c0),seed=int(c0))
         idx=np.floor((pts-org)/DX).astype(int)
         ok=(idx[:,0]>=0)&(idx[:,0]<nx)&(idx[:,1]>=0)&(idx[:,1]<ny)&(idx[:,2]>=0)&(idx[:,2]<nz)
         idx=idx[ok]; part[idx[:,0],idx[:,1],idx[:,2]]=True
