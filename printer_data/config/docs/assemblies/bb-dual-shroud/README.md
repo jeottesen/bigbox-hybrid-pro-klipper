@@ -10,3 +10,9 @@ What checks out (voxel overlap tests at 0.5 mm):
 - The shroud is a thin-walled half ring around the nozzle with an arch over the top and two prongs 35 mm apart (Y 315 and 350) with a 26.8 mm gap between them.
 
 Not known: **where and how the blower mounts**. Candidates are between the prongs or against the arch with the outlet feeding the slab at Z about 684 (X -10.6..-0.6, Y 311..353.6) or the tilted tube; none could be settled from the shape alone, so the blower is left out.
+
+## Blower placement as shown by the owner (2026-10-29)
+Three views from the owner's CAD (`owner_blower_placement_1_front3q.png`, `_2_face_on.png`, `_3_rear3q.png`; the dark blue part is the 4020 blower). What they show:
+- The blower's flat round face with its four ears sits **in the shroud's large tilted ring** (the ring with the screw holes, the "arch"), the ears lining up with the ring's holes, with only a thin gap around the body (tight tolerance). The ring leans back, so the blower is tilted with it.
+- The blower's **outlet is the flat bottom edge**, pointing down at the shroud's slab with the rectangular opening, which leads on to the C-ring around the nozzle (image 3 shows the outlet sitting over that opening).
+- Earlier placement searches (`find_blower.py`, `place_blower_*.py`) used a simplified blower (disc, channel and box ears), not the owner's blower STEP, and the shroud is a faceted STL, so tight clearances showed up as overlaps of 180-290 mm3. That overlap does not mean the blower can't sit here.
