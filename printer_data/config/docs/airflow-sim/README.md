@@ -61,3 +61,20 @@ The shroud (owner file) fits the Hybrid carriage with zero overlap and the V6 at
 The previous session built `voxel_B.py` (owner's shroud, Hybrid carriage, V6 at slot 1, approximate sock, bed 0.3 mm under the tip, 1 mm grid) with a blower body placed along the tilted screw-hole axis (`place_blower_tilt.py`) and flow injected at its outlet slot. The run finished but was never written up. Post-processed with `post_bed.py` (nozzle at X -62.4, Y 308.0, bed Z 635.3): **air speed within 25 mm of the nozzle, 0.3 to 5.3 mm above the bed, is 0.00 m/s in every sector.** The map (`runB_new_shroud_blower_guess_INVALID.png`) shows the jet dropping straight down at X about -20, beside the shroud, never entering its mouth.
 - This is a failure of the guessed blower pose (the outlet is not coupled to the shroud), not a finding about the shroud. No comparison with the stock mount (front sector 0.12 m/s, other sides about 2 m/s) can be drawn from it.
 - Still needed to unblock: where the blower sits relative to the shroud (a photo of the owner's shroud with the blower fitted, or the blower's mounting screw positions on the shroud).
+
+## Run 7: new BB Dual shroud vs stock mount, with the fan "fudged" (owner's decision: the blower CAD placement only matters for renders)
+Fan model: no blower body. A velocity inlet is placed across the shroud's duct mouth (X -33..-24, Y 312..340, Z 651.5, found from cross-sections of the STL: the channel under the ring is open upward there), flowing straight down, scaled to the same volumetric flow as the stock runs (459-476 mm2 x 3 m/s). A 1 mm closed chimney around the mouth stands in for the blower's outlet walls (without it the mouth is open on its +X side and the air leaves sideways). Script: `voxel_C4.py` (0.5 mm, cropped domain, 2.0M cells; runs at 0.5 mm, 8000 steps, nu 0.010, about 10 min). Same solver, caveats and approximate sock as the earlier runs.
+- **1 mm grid: invalid.** The funnel's passages are only 2-3 cells wide at 1 mm and the model pressurised (about 500 Pa-equivalent) with no air reaching the nozzle (with or without the sock). 0.5 mm resolves them.
+- **Bed 0.3 mm under the tip (`run7a_..._SEALED.png`): about 0 m/s.** The shroud's lowest point is Z 635.1, which is below the nozzle tip (635.6) and the bed plane (635.3), so the bed seals the shroud's outlets. Either the shroud outlets sit below the tip in this model, or the V6/nozzle height relative to the shroud (taken from the Hybrid carriage) is off. Real print height cannot be modelled for this shroud until that is resolved.
+- **Bed 3 mm below the tip, both designs at 0.5 mm, same imposed flow, air speed 0.3-3.3 mm above the bed, 3-20 mm from the nozzle (`run7b_...`, `run7c_...`):**
+
+| sector | stock mount | new shroud |
+|---|---|---|
+| +X | 3.61 m/s | 3.01 |
+| +Y (fan side) | 2.55 | 4.16 |
+| -X | 3.64 | 2.55 |
+| -Y (front) | 3.24 | 2.08 |
+| within 8 mm of the nozzle axis, 0.3-2.3 mm above bed | 3.99 | 2.31 |
+
+- **Reading:** at this standoff neither design leaves a side unserved, and the numbers do not show the new shroud as clearly better; the stock mount is stronger right at the nozzle, the shroud is stronger on the fan side and more uneven. Imposed flow, so this says nothing about how each design loads the fan.
+- **Correction to Run 6:** the stock mount's "front side almost unserved (0.12 m/s)" result applies only when the bed is 0.3 mm under the tip. With the bed 3 mm lower the front gets 3.24 m/s at 0.5 mm, so that weakness depends on print-surface standoff (the jet hits the surface behind the nozzle at a shallow height). Both runs are in this model, with its caveats.
