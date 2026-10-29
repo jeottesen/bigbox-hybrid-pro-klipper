@@ -40,3 +40,19 @@ Built `voxel_hero.py`: Hero Me 4020W left duct + V6 + approximate sock in the du
 ## Hero Me photos from the owner (2026-10-28) and why the Hero Me comparison still isn't valid
 Photos of a Hero Me on an Ender 3 (yellow base, 4020 axial heatsink fan in the front, two blue 4020 ducts with a 4020 blower each) show: one blower on each side of the base with its round face outward, its outlet pointing down into the duct (the blowers look tilted about 30 degrees, matching the duct's tilted inlet face); the ducts are separate left and right parts, each with a tall slotted plate and a floor that sweeps in to the nozzle, with the tips close to the nozzle on both sides. This confirms the layout but not exact positions.
 Why no valid run: the first rough attempt stalled (no flow past the duct's thin passages, pressure rising to about 40 mmH2O-equivalent), which points to channel details finer than the 1 mm grid, and the 0.5 mm and 0.6 mm grids are at or beyond what this machine handled (0.5 mm over the whole domain was killed twice, cause not verified). Also the artificial viscosity (about 30x air) inflates losses in narrow passages, so duct-versus-duct pressure comparisons are not trustworthy here. A fair Hero Me comparison would need a grid of about 0.3 mm around the duct, or a different solver. The stock-mount numbers at equal flow stay valid as a reference for comparing new designs of the same kind.
+
+## Run 5: 0.5 mm grid (lower memory) and a correction: the earlier runs had no print bed
+- The 0.5 mm run finished (`run5_050mm_with_approx_sock.png`; 2.7M cells, 8000 steps, about 20 minutes; the first two attempts were killed while voxelising because `trimesh.voxelized` used over 1 GB at that pitch, so `voxel_fine.py` now samples the surface in chunks and used about 150 MB). Same picture as the 1 mm and 0.75 mm runs with sharper jets (tip zone 1.83 m/s mean).
+- **Correction:** runs 1 to 5 had no bed, so the jet simply continued below the nozzle tip, and I described it as "passing below the tip". In a real print the bed (or the top of the print) is a fraction of a millimetre under the tip, so that jet would hit the surface and spread along it. Run 6 adds a bed 0.3 mm under the tip (`post_bed.py`, 1 mm grid, same settings as run 2):
+
+| Stock mount with a bed, air speed 0.3-3.3 mm above the bed, 3-20 mm from the nozzle | mean |
+|---|---|
+| +X side | 2.05 m/s |
+| +Y (fan side) | 2.03 m/s |
+| -X side | 1.92 m/s |
+| **-Y (front of the nozzle)** | **0.12 m/s** |
+
+So with a bed the stock mount does put fast air on the surface around the nozzle on three sides, and leaves the **front side** almost unserved (about 16x less). That, not "the jet misses the nozzle", is the better description of the stock mount's weakness in this model (same caveats: imposed flow, artificial viscosity, no real sock). Image: `run6_stock_with_bed.png`.
+
+## New BB Dual shroud: blower position still undetermined
+The shroud (owner file) fits the Hybrid carriage with zero overlap and the V6 at slot 1 in exactly one orientation (see `assemblies/bb-dual-shroud`). For the blower: putting it in the arch ring along X overlaps the shroud by 180-290 mm3 in all eight poses tried; a brute-force search over all 24 orientations and every position (`find_blower.py`) finds about 75,000 collision-free poses touching the shroud, and none whose outlet sits in a clearly enclosed mouth (best enclosure score 0.155), so the shape alone does not settle it. Not simulated.
